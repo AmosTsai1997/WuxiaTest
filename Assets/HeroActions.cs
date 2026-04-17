@@ -23,7 +23,6 @@ public class HeroActions : MonoBehaviour
 
 void Update()
     {
-        // 死亡處理
         // 取得 Health 腳本組件
         Health health = GetComponent<Health>();
 
@@ -124,6 +123,9 @@ void Update()
             // 呼叫 Health 腳本內的復活邏輯 (解決 CS0272 錯誤)
             health.ResetHealth();
         }
+        //  恢復滑鼠狀態
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         // 2. 隱藏死亡介面
         if (health.deathPanel != null)
@@ -131,16 +133,14 @@ void Update()
             health.deathPanel.SetActive(false);
         }
 
-        // 3. 傳送到重生點 (或是當前位置原地復活)
-        // 如果你有設定重生點物件，可以用：transform.position = respawnPoint.position;
-        // 暫時我們先原地復活，並讓角色站起來
-        transform.position = new Vector3(20f, 5f, 20f); // 這裡填入你地圖的起始座標
-        
-        // 4. 重啟控制與動畫
-        GetComponent<Animator>().Rebind(); // 重設動畫狀態
-        GetComponent<Animator>().Update(0f);
-        this.enabled = true; // 重新啟用 HeroActions 腳本
+        // 3. 座標重置 (確保不會卡在土裡，Y 高一點)
+        _controller.enabled = false; // 暫時關閉控制器才能強制改座標
+        transform.position = new Vector3(0, 5, 0); 
+        _controller.enabled = true;
 
-        Debug.Log("大俠已重新載入，準備再戰江湖！");
+        // 4. 動態與腳本重置
+        _animator.Rebind();
+        _animator.Update(0f);
+        Debug.Log("大俠復活成功！");
     }
 }

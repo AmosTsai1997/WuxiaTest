@@ -1,7 +1,8 @@
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
-{
+{   private Health healthScript; // 引用 Health 腳本   
+    private SimpleGravity gravity,verticalVelocity; // SimpleGravity 腳本 
     public Transform player;          // 拖入大俠
     public float patrolSpeed = 2f;    // 巡邏速度
     public float chaseSpeed = 4f;     // 追擊速度
@@ -14,7 +15,7 @@ public class EnemyAI : MonoBehaviour
     private float _patrolTimer;       // 巡邏計時器
     private CharacterController _controller;
     private Animator _animator;
-    private float _verticalVelocity;
+
 
     void Start()
     {
@@ -38,11 +39,28 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        // --- 如果 Enemy 腳本判定死亡，就不跑 AI ---
-        Enemy healthScript = GetComponent<Enemy>();
-        if (healthScript != null && healthScript.currentHealth <= 0) return;
+        // 獲取怪物自己的 Health 組件（使用你在最上方宣告的變數）
+        if (healthScript == null) healthScript = GetComponent<Health>();
 
-        ApplyGravity();
+        // 如果怪物自己死了，就不跑 AI
+        if (healthScript != null && healthScript.currentHP <= 0) 
+        {
+            _animator.SetFloat("Speed", 0f); // 確保死掉時不會滑步
+            return;
+        }
+        
+        // 先確認 player 物件是否存在（防止 MissingReferenceException）
+        if (player == null) return;
+        
+        // 再確認 player 是否還活著（透過 Health 腳本）
+        Health playerHealth = player.GetComponent<Health>();
+        if (playerHealth != null && playerHealth.isDead) 
+        {
+            // 如果大俠死了，怪物就停止追擊或播勝利動畫
+            _animator.SetFloat("Speed", 0f);
+            return; 
+        }
+        
         // 取得當前動畫狀態的資訊
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
     
@@ -131,7 +149,7 @@ public class EnemyAI : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 0.1f);
             
             // 核心位移代碼
-            _controller.Move(direction * moveSpeed * Time.deltaTime + new Vector3(0, _verticalVelocity, 0) * Time.deltaTime);
+            _controller.Move(direction * moveSpeed * Time.deltaTime );
         }
     }
 
@@ -142,9 +160,4 @@ public class EnemyAI : MonoBehaviour
         _targetPoint = transform.position + new Vector3(randomX, 0, randomZ);
     }
 
-    void ApplyGravity()
-    {
-        if (_controller.isGrounded) _verticalVelocity = -0.5f;
-        else _verticalVelocity -= 9.81f * Time.deltaTime;
-    }
 }

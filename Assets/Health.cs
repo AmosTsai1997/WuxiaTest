@@ -78,7 +78,6 @@ public class Health : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
-        Debug.Log("觸發死亡動畫！");
 
         // 1. 變紅確認 (視覺偵錯)
         var renderers = GetComponentsInChildren<Renderer>();
@@ -104,9 +103,7 @@ public class Health : MonoBehaviour
             
             // 關鍵動作：直接播放 Die，並且「關閉轉場」
             _anim.Play("Die", 0, 0f);
-            
-            // 如果他還是會跳回 Idle，請試試這行暴力解：
-            // _anim.runtimeAnimatorController = null; // (警告：這會完全失效，除非你只想讓他停在第一幀)
+            Debug.Log("觸發死亡動畫！");
         }
 
             // 4. 關閉物理特性，防止被推擠或偵測
@@ -121,10 +118,16 @@ public class Health : MonoBehaviour
         {   
             // 顯示死亡介面
             if (deathPanel != null) deathPanel.SetActive(true);
+            // 專業做法：死掉時解鎖滑鼠，否則玩家沒辦法點擊 UI (如果有按鈕的話)
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             GetComponent<HeroActions>().enabled = false;
             // 重力也暫時歸零
             if (GetComponent<SimpleGravity>()) 
+             {
                 GetComponent<SimpleGravity>().verticalVelocity = 0;
+             }            
+            gameObject.SetActive(false);
         }
 
     }
