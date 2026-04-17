@@ -5,21 +5,29 @@ public class NPCInteraction : MonoBehaviour
 {
     [Header("數值設定")]
     private Health healthScript; // 引用 Health 腳本
+    private Camera mainCamera;
+    private Quaternion originalCameraRotation;
+    private bool isTalking = false;
     public int xpValue = 20;
 
     [Header("UI 元件")]
     public GameObject dialoguePanel;
     public TextMeshProUGUI dialogueText;
-    public TMP_InputField playerInput;
+    public GameObject actionButtons; // 包含「接受」與「拒絕」的按鈕組
 
     [Header("NPC 設定")]
     public string npcName = "神祕少女";
-    public string defaultGreeting = "這位少俠，找我有何事？";
+    public string questInquiry = "這位少俠，請幫幫我？";
+
+    [Header("任務設定")]
+    public GameObject enemyPrefab;    // 拖入你的強大敵人 Prefab
+    public Vector3 spawnPosition = new Vector3(30, 5, 30);
     private bool isPlayerNearby = false;
 
     void Start()
     {   
         dialoguePanel.SetActive(false); // 預設關閉對話框
+        mainCamera = Camera.main;
         healthScript = GetComponent<Health>();
     }
 
@@ -42,26 +50,68 @@ public class NPCInteraction : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+        // 當正在對話時，讓相機平滑看向 NPC
+        if (isTalking)
+        {
+            FocusCameraOnNPC();
+        }
     }
-
+    void FocusCameraOnNPC()
+    {
+        // 計算從相機到 NPC 的方向（稍微往上看一點，對準臉部）
+        Vector3 targetDir = (transform.position + Vector3.up * 1.5f) - mainCamera.transform.position;
+        Quaternion targetRotation = Quaternion.LookRotation(targetDir);
+        
+        // 平滑轉向
+        mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, targetRotation, Time.deltaTime * 5f);
+    }
     void ToggleDialogue()
     {
         bool isActive = !dialoguePanel.activeSelf;
-        dialoguePanel.SetActive(isActive);
+        dialoguePanel.SetActive(isTalking);
 
-        if (isActive)
+        if (isTalking)
         {
-            dialogueText.text = $"【{npcName}】: {defaultGreeting}";
-            // 開啟對話時解鎖滑鼠，方便輸入
+            originalCameraRotation = mainCamera.transform.rotation;
+            dialogueText.text = $"【{npcName}】: {questInquiry}";
+            actionButtons.SetActive(true); // 顯示任務選項
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
         else
-        {   
-            // 關閉對話時鎖定滑鼠
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+        {
+            EndDialogue();
         }
+    }
+public void OnAcceptQuest()
+    {
+        dialogueText.text = $"【{npcName}】: 萬事拜託了！他在座標 (20, 2, 20) 等著你。";
+        actionButtons.SetActive(false);
+        
+        // 生成強大敵人
+        if (enemyPrefab != null)
+        {
+            Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+            Debug.Log("強大敵人已降臨！");
+        }
+        
+        // 延遲兩秒關閉對話框
+        Invoke("EndDialogue", 2f);
+    }
+
+    public void OnDeclineQuest()
+    {
+        dialogueText.text = $"【{npcName}】: 既然少俠另有要務，在下也不便強求...";
+        actionButtons.SetActive(false);
+        Invoke("EndDialogue", 2f);
+    }
+
+    void EndDialogue()
+    {
+        isTalking = false;
+        dialoguePanel.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // 觸發偵測
