@@ -41,9 +41,20 @@ void Update()
         float v = Input.GetAxis("Vertical");
         Vector3 inputDir = new Vector3(h, 0, v).normalized;
         // 準備一個最終的位移向量
-    Vector3 finalVelocity = Vector3.zero;
+        Vector3 finalVelocity = Vector3.zero;
+        // 2.處理跳躍邏輯 (提前到這裡) ---
+        // 必須在 Move 之前就告訴重力腳本我們要跳
+        if (Input.GetButtonDown("Jump") && _controller.isGrounded)
+        {
+            if (_gravityScript != null)
+            {
+                // 呼叫重力腳本的跳躍方法
+                _gravityScript.SetJumpVelocity(jumpHeight); 
+                _animator.SetTrigger("Jump");
+            }
+        }
 
-        // 2. 處理水平移動 (參考攝影機方向)
+        // 3. 處理水平移動 (參考攝影機方向)
         if (inputDir.magnitude >= 0.1f)
         {
             Vector3 camForward = Camera.main.transform.forward;
@@ -60,7 +71,6 @@ void Update()
             // 轉向邏輯
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-            
             _animator.SetFloat("Speed", speed);
         }
         else
@@ -68,7 +78,7 @@ void Update()
             _animator.SetFloat("Speed", 0f);
         }
 
-        // 3. 處理垂直移動 (重力) 
+        // 4. 處理垂直移動 (重力) 
         // 注意：這裡必須在 if 外面，且是「疊加」到 finalVelocity 上
         if (_gravityScript != null)
         {
@@ -76,23 +86,11 @@ void Update()
             finalVelocity.y = _gravityScript.verticalVelocity;
         }
 
-        // 4. 【全劇終】整個 Update 只能有這一個 Move
+        // 5. 【全劇終】整個 Update 只能有這一個 Move
         // 這樣水平跟垂直才不會互相打架
         _controller.Move(finalVelocity * Time.deltaTime);
 
-        // 2. 跳躍邏輯 (改為修改 SimpleGravity 的速度)
-        if (Input.GetButtonDown("Jump") && _controller.isGrounded)
-        {
-            if (_gravityScript != null)
-            {
-                // 直接把跳躍的力量傳給重力腳本裡的垂直速度變數
-                // 假設 SimpleGravity 裡那個變數叫 _verticalVelocity (請確認名稱)
-                _gravityScript.SetJumpVelocity(jumpHeight); 
-            }
-            _animator.SetTrigger("Jump");
-        }
-
-        // 3. 攻擊邏輯
+        //  攻擊邏輯
         if (Input.GetMouseButtonDown(0))
         {
             DoAttack();

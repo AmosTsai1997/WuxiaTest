@@ -26,7 +26,8 @@ public class SimpleGravity : MonoBehaviour
         _controller.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
     }
     public void SetJumpVelocity(float jumpHeight)
-    {
+    {   // 物理公式：速度 = 根號(高度 * -2 * 重力)
+        // 這裡用 2.0f 是因為這是一個常見的重力補償係數
         verticalVelocity = Mathf.Sqrt(jumpHeight * 2f * gravity); 
     }
 }
