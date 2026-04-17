@@ -4,11 +4,8 @@ using TMPro; // 記得引入
 public class NPCInteraction : MonoBehaviour
 {
     [Header("數值設定")]
-    public float maxHealth = 100f; // 增加最大血量設定
-    private float currentHealth;
+    private Health healthScript; // 引用 Health 腳本
     public int xpValue = 20;
-    public float gravity = 9.81f;       // 重力強度
-    private float _verticalVelocity;    // 當前的垂直速度
 
     [Header("UI 元件")]
     public GameObject dialoguePanel;
@@ -22,7 +19,8 @@ public class NPCInteraction : MonoBehaviour
     private bool isPlayerNearby = false;
 
     void Start()
-    {
+    {   
+        healthScript = GetComponent<Health>();
         dialoguePanel.SetActive(false); // 預設關閉對話框
     }
 
@@ -32,6 +30,11 @@ public class NPCInteraction : MonoBehaviour
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.F))
         {
             ToggleDialogue();
+        }
+        // 檢查是否死亡（直接問 Health 腳本）
+        if (healthScript != null && healthScript.currentHP <= 0)
+        {
+            PerformDeath();
         }
     }
 
@@ -74,5 +77,18 @@ public class NPCInteraction : MonoBehaviour
             dialoguePanel.SetActive(false);
         }
     }
-
+    public void TakeDamage(float amount)
+    {
+        // 不要自己扣血，叫 Health 腳本去扣
+        if (healthScript != null)
+        {
+            healthScript.TakeDamage(amount); 
+        }
+    }
+    void PerformDeath()
+        {
+            // 處理 NPC 死亡邏輯（例如播動畫、消失）
+            Debug.Log(gameObject.name + " 倒下了");
+            Destroy(gameObject, 2f); // 2秒後移除
+        }
 }
