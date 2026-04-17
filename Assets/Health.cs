@@ -3,7 +3,7 @@ using UnityEngine.UI; // 必須引用 UI 命名空間
 public class Health : MonoBehaviour
 {
     public float maxHP = 500f;
-    public float currentHP;
+    public float currentHP{ get; private set; }
     [Header("無敵幀設定")]
     public float invincibilityDuration = 1.5f; // 無敵時間長度
     private float _lastDamageTime = -99f;      // 記錄上一次受傷的時間
@@ -127,5 +127,15 @@ public class Health : MonoBehaviour
                 GetComponent<SimpleGravity>().verticalVelocity = 0;
         }
 
+    }
+    public void ResetHealth()
+    {
+        isDead = false;
+        currentHP = maxHP; // 因為是在 Health.cs 內部，所以可以修改 private set 的變數
+        
+        if (deathPanel != null)
+        {
+            deathPanel.SetActive(false);
+        }
     }
 }

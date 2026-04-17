@@ -119,9 +119,12 @@ void Update()
         Health health = GetComponent<Health>();
         
         // 1. 回復血量
-        health.currentHP = health.maxHP;
-        health.isDead = false;
-        
+        if (health != null)
+        {
+            // 呼叫 Health 腳本內的復活邏輯 (解決 CS0272 錯誤)
+            health.ResetHealth();
+        }
+
         // 2. 隱藏死亡介面
         if (health.deathPanel != null)
         {
@@ -131,11 +134,13 @@ void Update()
         // 3. 傳送到重生點 (或是當前位置原地復活)
         // 如果你有設定重生點物件，可以用：transform.position = respawnPoint.position;
         // 暫時我們先原地復活，並讓角色站起來
-        transform.position = new Vector3(0, 5, 0); // 這裡填入你地圖的起始座標
+        transform.position = new Vector3(20f, 5f, 20f); // 這裡填入你地圖的起始座標
         
         // 4. 重啟控制與動畫
         GetComponent<Animator>().Rebind(); // 重設動畫狀態
         GetComponent<Animator>().Update(0f);
         this.enabled = true; // 重新啟用 HeroActions 腳本
+
+        Debug.Log("大俠已重新載入，準備再戰江湖！");
     }
 }
