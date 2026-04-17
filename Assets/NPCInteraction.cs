@@ -75,7 +75,7 @@ public class NPCInteraction : MonoBehaviour
         {   
             // 讓相機緩慢轉向 NPC
             Camera.main.transform.LookAt(transform.position + Vector3.up * 1.5f);
-            originalCameraRotation = mainCamera.transform.rotation;
+         //   originalCameraRotation = mainCamera.transform.rotation;
             dialogueText.text = $"【{npcName}】: {questInquiry}";
             actionButtons.SetActive(true); // 顯示任務選項
             Cursor.lockState = CursorLockMode.None;
@@ -88,7 +88,7 @@ public class NPCInteraction : MonoBehaviour
     }
 public void OnAcceptQuest()
     {
-        dialogueText.text = $"【{npcName}】: 萬事拜託了！他在座標 (20, 2, 20) 等著你。";
+        dialogueText.text = $"【{npcName}】: 萬事拜託了！敵人在前面等著你。";
         actionButtons.SetActive(false);
         
         // 生成強大敵人
