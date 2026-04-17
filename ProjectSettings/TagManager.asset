@@ -11,6 +11,7 @@ TagManager:
   - Cube_Spawn_Point_1
   - Cube_Spawn_Point_2
   - Enemy
+  - NPC
   layers:
   - Default
   - TransparentFX

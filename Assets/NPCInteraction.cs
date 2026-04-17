@@ -7,6 +7,7 @@ public class NPCInteraction : MonoBehaviour
     private Health healthScript; // 引用 Health 腳本
     private Camera mainCamera;
     private Quaternion originalCameraRotation;
+    public Transform cameraTarget;
     private bool isTalking = false;
     public int xpValue = 20;
 
@@ -21,7 +22,7 @@ public class NPCInteraction : MonoBehaviour
 
     [Header("任務設定")]
     public GameObject enemyPrefab;    // 拖入你的強大敵人 Prefab
-    public Vector3 spawnPosition = new Vector3(30, 5, 30);
+    public Vector3 spawnPosition = new Vector3(27f, 5f, 32f);
     private bool isPlayerNearby = false;
 
     void Start()
@@ -71,7 +72,9 @@ public class NPCInteraction : MonoBehaviour
         dialoguePanel.SetActive(isTalking);
 
         if (isTalking)
-        {
+        {   
+            // 讓相機緩慢轉向 NPC
+            Camera.main.transform.LookAt(transform.position + Vector3.up * 1.5f);
             originalCameraRotation = mainCamera.transform.rotation;
             dialogueText.text = $"【{npcName}】: {questInquiry}";
             actionButtons.SetActive(true); // 顯示任務選項
