@@ -13,15 +13,14 @@ public class NPCInteraction : MonoBehaviour
     public TMP_InputField playerInput;
 
     [Header("NPC 設定")]
-    public string npcName = "神祕劍客";
-    public string defaultGreeting = "這位少俠，找在下有何貴幹？";
-
+    public string npcName = "神祕少女";
+    public string defaultGreeting = "這位少俠，找我有何事？";
     private bool isPlayerNearby = false;
 
     void Start()
     {   
-        healthScript = GetComponent<Health>();
         dialoguePanel.SetActive(false); // 預設關閉對話框
+        healthScript = GetComponent<Health>();
     }
 
     void Update()
@@ -29,12 +28,19 @@ public class NPCInteraction : MonoBehaviour
         // 玩家在附近且按下 F 鍵觸發對話
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.F))
         {
-            ToggleDialogue();
+            // 如果 NPC 還活著才能對話
+            if (healthScript != null && healthScript.currentHP > 0)
+            {
+                ToggleDialogue();
+            }
         }
         // 檢查是否死亡（直接問 Health 腳本）
-        if (healthScript != null && healthScript.currentHP <= 0)
+        if (healthScript != null && healthScript.currentHP <= 0 && dialoguePanel.activeSelf)
         {
             PerformDeath();
+            dialoguePanel.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 
@@ -51,7 +57,8 @@ public class NPCInteraction : MonoBehaviour
             Cursor.visible = true;
         }
         else
-        {
+        {   
+            // 關閉對話時鎖定滑鼠
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
@@ -75,6 +82,12 @@ public class NPCInteraction : MonoBehaviour
             Debug.Log("你按下了 F 鍵！");
             isPlayerNearby = false;
             dialoguePanel.SetActive(false);
+            // 離開範圍時確保滑鼠被鎖定（防止對話框強制開啟時離開）
+            if (Cursor.lockState != CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
         }
     }
     public void TakeDamage(float amount)
