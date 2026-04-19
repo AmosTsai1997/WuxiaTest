@@ -71,18 +71,46 @@ public class NPCInteraction : MonoBehaviour
 
     // 當按下「接受」按鈕時呼叫
     public void OnAcceptQuest()
-    {
-        dialogueText.text = $"【{npcName}】: 萬事拜託了！Boss 已經出現了。";
+    {   
+        // 1. 找到 Player 並取得等級
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        int playerLevel = 1;
+        if (player != null)
+        {
+            playerLevel = player.GetComponent<HeroActions>().level;
+        }
+
+        dialogueText.text = $"【{npcName}】: 喔！看來少俠已達 {playerLevel} 等，村外的敵人也變強了，請小心！";
         if (actionButtons != null) actionButtons.SetActive(false);
 
-        // 生成 Boss
-        if (bossPrefab != null && spawnPosition != null)
+        // 2. 生成敵人並同步等級
+        if (playerLevel/5 != 0 && enemyPrefab != null && spawnPoint != null)
         {
-            Instantiate(bossPrefab, spawnPosition, Quaternion.identity);
-            Debug.Log("哥布林 Boss 已降臨！");
+            GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+
+            // 呼叫敵人的初始化函式，把大俠的等級傳進去
+            EnemyLevel eLevel = spawnedEnemy.GetComponent<EnemyLevel>();
+            if (eLevel != null)
+            {
+                eLevel.InitializeEnemy(playerLevel);
+            }
+
+            Debug.Log($"生成了 {playerLevel} 等的強力敵人！");
+        }
+        // 生成 Boss
+        else 
+        {
+            if (bossPrefab != null && spawnPosition != null)
+            {
+                Instantiate(bossPrefab, spawnPosition, Quaternion.identity);
+                Debug.Log("哥布林 Boss 已降臨！");
+            }
+                
         }
 
         Invoke("EndDialogue", 2f);
+
+
     }
 
     public void OnDeclineQuest()
@@ -111,6 +139,16 @@ public class NPCInteraction : MonoBehaviour
         {
             isPlayerNearby = false;
             EndDialogue();
+        }
+    }
+
+    public void CompleteQuest()
+    {
+        // 尋找場景中的大俠
+        HeroActions hero = GameObject.FindGameObjectWithTag("Player").GetComponent<HeroActions>();
+        if (hero != null)
+        {
+            hero.AddXP(500); // 一次給 500 經驗，讓測試時能快速跳等
         }
     }
 }

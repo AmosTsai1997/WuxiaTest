@@ -167,7 +167,7 @@ void Update()
     {
         level++;
         currentXP -= xpToNextLevel;
-        xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.5f); // 每一等升級難度增加
+        xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.2f); // 每一等升級難度增加
 
         Debug.Log($"恭喜升級！目前等級：{level}");
 
@@ -195,7 +195,7 @@ void Update()
         {
             if (swordModel != null) swordModel.SetActive(true);
             if (bowModel != null) bowModel.SetActive(false);
-            playerDamage = 50f; // 換劍後攻擊力提升
+            playerDamage += 50f; // 換劍後攻擊力提升
             Debug.Log("已解鎖並裝備：劍！");
         }
         else if (type == "Bow")
@@ -203,7 +203,7 @@ void Update()
             if (swordModel != null) swordModel.SetActive(false);
             if (bowModel != null) bowModel.SetActive(true);
             playerAttackRange = 15f; // 換弓後攻擊範圍大幅增加
-            playerDamage = 40f;      // 弓箭傷害調整
+            playerDamage += 40f;      // 弓箭傷害調整
             Debug.Log("已解鎖並裝備：弓！");
         }
     }
