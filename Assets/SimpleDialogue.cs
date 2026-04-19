@@ -10,11 +10,12 @@ public class SimpleDialogue : MonoBehaviour
     public Button[] optionButtons; // 將 3 個按鈕拖入此陣列
 
     [Header("NPC 設定")]
-    public string npcName = "老村長";
+    private NPCInteraction _npcInformation;
     private bool isPlayerNearby = false;
 
     void Start()
     {
+        _npcInformation = GetComponent <NPCInteraction>();
         dialoguePanel.SetActive(false);
         
         // 為按鈕綁定點擊事件
@@ -40,7 +41,7 @@ public class SimpleDialogue : MonoBehaviour
 
     if (isActive)
     {
-        dialogueText.text = $"【{npcName}】: 少俠，這兵荒馬亂的，有何貴幹？";
+        dialogueText.text = $"【{_npcInformation.npcName}】: 少俠，這兵荒馬亂的，有何貴幹？";
         
         // 【關鍵】確保開啟對話時，選項按鈕是顯示的
         foreach(Button btn in optionButtons) 
@@ -70,18 +71,18 @@ public class SimpleDialogue : MonoBehaviour
     switch (index)
     {
         case 1:
-            dialogueText.text = $"【{npcName}】: 這裡是大隱村，一個被世人遺忘的桃源。";
+            dialogueText.text = $"【{_npcInformation.npcName}】: 這裡是大隱村，一個被世人遺忘的桃源。";
             // 讓玩家看完這句話，3秒後自動關閉
             Invoke("CloseDialogue", 3.0f); 
             break;
             
         case 2:
-            dialogueText.text = $"【{npcName}】: 村外的林子裡最近有狼群出沒，你要是能去清理一下就好了。";
+            dialogueText.text = $"【{_npcInformation.npcName}】: 村外的林子裡最近有狼群出沒，你要是能去清理一下就好了。";
             Invoke("CloseDialogue", 3.0f);
             break;
             
         case 3:
-            dialogueText.text = $"【{npcName}】: 慢走不送，少俠保重。";
+            dialogueText.text = $"【{_npcInformation.npcName}】: 慢走不送，少俠保重。";
             // 再見通常比較短，1.5秒後關閉即可
             Invoke("CloseDialogue", 1.5f);
             break;

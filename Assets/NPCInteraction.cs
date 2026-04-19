@@ -1,16 +1,8 @@
 using UnityEngine;
-using TMPro; // 記得引入
+using TMPro;
 
 public class NPCInteraction : MonoBehaviour
 {
-    [Header("數值設定")]
-    private Health healthScript; // 引用 Health 腳本
-    private Camera mainCamera;
-    private Quaternion originalCameraRotation;
-    public Transform cameraTarget;
-    private bool isTalking = false;
-    public int xpValue = 20;
-
     [Header("UI 元件")]
     public GameObject dialoguePanel;
     public TextMeshProUGUI dialogueText;
@@ -18,66 +10,46 @@ public class NPCInteraction : MonoBehaviour
 
     [Header("NPC 設定")]
     public string npcName = "神祕少女";
-    public string questInquiry = "這位少俠，請幫幫我？";
+    public string questInquiry = "這位少俠，村外有哥布林 Boss 作亂，你能幫幫我嗎？";
 
-    [Header("任務設定")]
-    public GameObject enemyPrefab;    // 拖入你的強大敵人 Prefab
-    public Vector3 spawnPosition = new Vector3(27f, 5f, 32f);
+    [Header("任務設定 (Boss 生成)")]
+    public GameObject bossPrefab;    // 拖入你的 Boss Prefab
+    public Vector3 spawnPosition = new Vector3(27f, 5f, 32f); //BOSS 出現點
+   // public Transform spawnPoint;     // 拖入一個空的 GameObject 作為生成點
+
     private bool isPlayerNearby = false;
+    private bool isTalking = false;
 
     void Start()
-    {   
-        dialoguePanel.SetActive(false); // 預設關閉對話框
-        mainCamera = Camera.main;
-        healthScript = GetComponent<Health>();
+    {
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
     }
 
     void Update()
     {
-        // 玩家在附近且按下 F 鍵觸發對話
+        // 靠近且按下 F，切換對話
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.F))
         {
-            // 如果 NPC 還活著才能對話
-            if (healthScript != null && healthScript.currentHP > 0)
-            {
-                ToggleDialogue();
-            }
+            ToggleDialogue();
         }
-        // 檢查是否死亡（直接問 Health 腳本）
-        if (healthScript != null && healthScript.currentHP <= 0 && dialoguePanel.activeSelf)
-        {
-            PerformDeath();
-            dialoguePanel.SetActive(false);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        // 當正在對話時，讓相機平滑看向 NPC
+
+        // 如果正在對話，鏡頭看向 NPC
         if (isTalking)
         {
             FocusCameraOnNPC();
         }
     }
-    void FocusCameraOnNPC()
-    {
-        // 計算從相機到 NPC 的方向（稍微往上看一點，對準臉部）
-        Vector3 targetDir = (transform.position + Vector3.up * 1.5f) - mainCamera.transform.position;
-        Quaternion targetRotation = Quaternion.LookRotation(targetDir);
-        
-        // 平滑轉向
-        mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, targetRotation, Time.deltaTime * 5f);
-    }
+
     void ToggleDialogue()
     {
-        bool isActive = !dialoguePanel.activeSelf;
+        isTalking = !isTalking; // 切換狀態
         dialoguePanel.SetActive(isTalking);
 
         if (isTalking)
-        {   
-            // 讓相機緩慢轉向 NPC
-            Camera.main.transform.LookAt(transform.position + Vector3.up * 1.5f);
-         //   originalCameraRotation = mainCamera.transform.rotation;
+        {
             dialogueText.text = $"【{npcName}】: {questInquiry}";
-            actionButtons.SetActive(true); // 顯示任務選項
+            if (actionButtons != null) actionButtons.SetActive(true);
+
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -86,75 +58,59 @@ public class NPCInteraction : MonoBehaviour
             EndDialogue();
         }
     }
-public void OnAcceptQuest()
+
+    void FocusCameraOnNPC()
     {
-        dialogueText.text = $"【{npcName}】: 萬事拜託了！敵人在前面等著你。";
-        actionButtons.SetActive(false);
-        
-        // 生成強大敵人
-        if (enemyPrefab != null)
+        Vector3 targetDir = (transform.position + Vector3.up * 1.5f) - Camera.main.transform.position;
+        if (targetDir != Vector3.zero)
         {
-            Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            Debug.Log("強大敵人已降臨！");
+            Quaternion targetRotation = Quaternion.LookRotation(targetDir);
+            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, targetRotation, Time.deltaTime * 5f);
         }
-        
-        // 延遲兩秒關閉對話框
+    }
+
+    // 當按下「接受」按鈕時呼叫
+    public void OnAcceptQuest()
+    {
+        dialogueText.text = $"【{npcName}】: 萬事拜託了！Boss 已經出現了。";
+        if (actionButtons != null) actionButtons.SetActive(false);
+
+        // 生成 Boss
+        if (bossPrefab != null && spawnPosition != null)
+        {
+            Instantiate(bossPrefab, spawnPosition, Quaternion.identity);
+            Debug.Log("哥布林 Boss 已降臨！");
+        }
+
         Invoke("EndDialogue", 2f);
     }
 
     public void OnDeclineQuest()
     {
-        dialogueText.text = $"【{npcName}】: 既然少俠另有要務，在下也不便強求...";
-        actionButtons.SetActive(false);
+        dialogueText.text = $"【{npcName}】: 既然少俠另有要務，那就不強求了。";
+        if (actionButtons != null) actionButtons.SetActive(false);
         Invoke("EndDialogue", 2f);
     }
 
     void EndDialogue()
     {
         isTalking = false;
-        dialoguePanel.SetActive(false);
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    // 觸發偵測
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("偵測到物體進入範圍：" + other.name);
-        if (other.CompareTag("Player"))
-        {
-            isPlayerNearby = true;
-            Debug.Log("靠近 NPC，按 F 對話");
-        }
+        if (other.CompareTag("Player")) isPlayerNearby = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("你按下了 F 鍵！");
             isPlayerNearby = false;
-            dialoguePanel.SetActive(false);
-            // 離開範圍時確保滑鼠被鎖定（防止對話框強制開啟時離開）
-            if (Cursor.lockState != CursorLockMode.Locked)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+            EndDialogue();
         }
     }
-    public void TakeDamage(float amount)
-    {
-        // 不要自己扣血，叫 Health 腳本去扣
-        if (healthScript != null)
-        {
-            healthScript.TakeDamage(amount); 
-        }
-    }
-    void PerformDeath()
-        {
-            // 處理 NPC 死亡邏輯（例如播動畫、消失）
-            Debug.Log(gameObject.name + " 倒下了");
-            Destroy(gameObject, 2f); // 2秒後移除
-        }
 }

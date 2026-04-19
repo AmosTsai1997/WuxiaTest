@@ -8,11 +8,21 @@ public class HeroActions : MonoBehaviour
     private SimpleGravity _gravityScript;  // 引用另外一個重力腳本
     private bool _isGrounded;    // 用來存儲角色是否踩在地上的狀態
     private Vector3 _velocity;   // 用來存儲角色的垂直速度（跳躍與重力的力道）
-    public float playerDamage = 34f;    // 大俠攻擊力比較高，三刀一隻
+    [Header("攻擊力與攻擊範圍")]
+    public float playerDamage = 30f;    // 大俠攻擊力比較高，三刀一隻
     public float playerAttackRange = 2f;// 攻擊範圍
+    [Header("移動速度與跳躍高度")]
     public float speed = 5f;            //移動速度
-    public float jumpHeight = 1.0f;     // 跳躍高度
+    public float jumpHeight = 0.1f;     // 跳躍高度
     public float turnSpeed = 720f;      //轉向速度
+    [Header("等級與經驗值")]
+    public int level = 1;
+    public int currentXP = 0;
+    public int xpToNextLevel = 100; // 第一等升級需要的經驗
+    [Header("武器系統")]
+    public GameObject swordModel; // 拖入劍的模型
+    public GameObject bowModel;   // 拖入弓的模型
+    public string currentWeapon = "None";
 
     void Start()
     {
@@ -96,12 +106,7 @@ void Update()
             DoAttack();
         }
     }
-        //  跳躍
-    public void SetJumpVelocity(float jumpHeight)
-    {   // 物理公式：速度 = 根號(高度 * -2 * 重力)
-        // 這裡用 2.0f 是因為這是一個常見的重力補償係數
-        verticalVelocity = Mathf.Sqrt(jumpHeight * 2f * gravity);
-    }
+
 
     void DoAttack()
     {
@@ -146,5 +151,60 @@ void Update()
         _animator.Rebind();
         _animator.Update(0f);
         Debug.Log("大俠復活成功！");
+    }
+    public void AddXP(int amount)
+    {
+        currentXP += amount;
+        Debug.Log($"獲得經驗值：{amount}，目前總計：{currentXP}");
+
+        if (currentXP >= xpToNextLevel)
+        {
+            LevelUp();
+        }
+    }
+
+    void LevelUp()
+    {
+        level++;
+        currentXP -= xpToNextLevel;
+        xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.5f); // 每一等升級難度增加
+
+        Debug.Log($"恭喜升級！目前等級：{level}");
+
+        // 升級後檢查解鎖
+        CheckWeaponUnlock();
+    }
+    void CheckWeaponUnlock()
+    {
+        // 檢查 10 等解鎖劍
+        if (level >= 10 && currentWeapon == "None")
+        {
+            UnlockWeapon("Sword");
+        }
+        // 檢查 20 等解鎖弓
+        if (level >= 20 && currentWeapon != "Bow")
+        {
+            UnlockWeapon("Bow");
+        }
+    }
+
+    void UnlockWeapon(string type)
+    {
+        currentWeapon = type;
+        if (type == "Sword")
+        {
+            if (swordModel != null) swordModel.SetActive(true);
+            if (bowModel != null) bowModel.SetActive(false);
+            playerDamage = 50f; // 換劍後攻擊力提升
+            Debug.Log("已解鎖並裝備：劍！");
+        }
+        else if (type == "Bow")
+        {
+            if (swordModel != null) swordModel.SetActive(false);
+            if (bowModel != null) bowModel.SetActive(true);
+            playerAttackRange = 15f; // 換弓後攻擊範圍大幅增加
+            playerDamage = 40f;      // 弓箭傷害調整
+            Debug.Log("已解鎖並裝備：弓！");
+        }
     }
 }
