@@ -11,7 +11,7 @@ public class HeroActions : MonoBehaviour
     public float playerDamage = 34f;    // 大俠攻擊力比較高，三刀一隻
     public float playerAttackRange = 2f;// 攻擊範圍
     public float speed = 5f;            //移動速度
-    public float jumpHeight = 2.0f;     // 跳躍高度
+    public float jumpHeight = 1.0f;     // 跳躍高度
     public float turnSpeed = 720f;      //轉向速度
 
     void Start()
@@ -95,6 +95,12 @@ void Update()
         {
             DoAttack();
         }
+    }
+        //  跳躍
+    public void SetJumpVelocity(float jumpHeight)
+    {   // 物理公式：速度 = 根號(高度 * -2 * 重力)
+        // 這裡用 2.0f 是因為這是一個常見的重力補償係數
+        verticalVelocity = Mathf.Sqrt(jumpHeight * 2f * gravity);
     }
 
     void DoAttack()

@@ -69,7 +69,7 @@
       "source": "builtin",
       "dependencies": {
         "com.unity.animation.rigging": "1.4.1",
-        "com.unity.timeline": "1.8.11",
+        "com.unity.timeline": "1.8.12",
         "com.unity.cinemachine": "3.1.6",
         "com.unity.formats.fbx": "5.1.5"
       }
@@ -233,7 +233,7 @@
       }
     },
     "com.unity.test-framework.performance": {
-      "version": "3.2.0",
+      "version": "3.3.0",
       "depth": 3,
       "source": "registry",
       "dependencies": {
@@ -243,7 +243,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.8.11",
+      "version": "1.8.12",
       "depth": 1,
       "source": "registry",
       "dependencies": {
