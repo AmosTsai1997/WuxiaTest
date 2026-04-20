@@ -141,4 +141,10 @@ public class Health : MonoBehaviour
             deathPanel.SetActive(false);
         }
     }
+    public void SetHealthFromLevel(float newMaxHP)
+    {
+        maxHP = newMaxHP;
+        currentHP = maxHP; // 這裡在自己腳本內，一定有權限改
+        Debug.Log($"血量已根據等級更新為：{maxHP}");
+    }
 }

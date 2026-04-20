@@ -75,12 +75,8 @@ public class NPCInteraction : MonoBehaviour
     {   
         // 1. 找到 Player 並取得等級
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        int playerLevel = 1;
-        if (player != null)
-        {
-            playerLevel = player.GetComponent<HeroActions>().level;
-        }
-
+        int playerLevel = player.GetComponent<LevelSystem>().currentLevel;
+        
         dialogueText.text = $"【{npcName}】: 喔！看來少俠已達 {playerLevel} 等，村外的敵人也變強了，請小心！";
         if (actionButtons != null) actionButtons.SetActive(false);
 
@@ -88,15 +84,11 @@ public class NPCInteraction : MonoBehaviour
         if (playerLevel/5 != 0 && enemyPrefab != null && spawnPosition != null)
         {
             GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-
             // 呼叫敵人的初始化函式，把大俠的等級傳進去
-            EnemyLevel eLevel = spawnedEnemy.GetComponent<LevelSystem>();
-            if (eLevel != null)
-            {
-                eLevel.InitializeEnemy(playerLevel);
-            }
+            int eLevel = spawnedEnemy.GetComponent<LevelSystem>().currentLevel;
+            eLevel =playerLevel;
 
-            Debug.Log($"生成了 {playerLevel} 等的強力敵人！");
+            Debug.Log($"生成了 {eLevel} 等的強力敵人！");
         }
         // 生成 Boss
         else 
@@ -110,8 +102,6 @@ public class NPCInteraction : MonoBehaviour
         }
 
         Invoke("EndDialogue", 2f);
-
-
     }
 
     public void OnDeclineQuest()

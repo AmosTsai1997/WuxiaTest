@@ -2,38 +2,64 @@ using UnityEngine;
 using UnityEngine.UI;
 public class LevelSystem : MonoBehaviour
 {   
-    private Health h ;
-    public int level = 1;
+    [Header("等級資訊")]
+    [SerializeField] // 讓 private 變數也能顯示在 Inspector 視窗中
+    private int _currentLevel = 1;
+    // 提供一個 public 的唯讀接口，讓其他腳本（如 NPC 或 UI）可以讀取等級
+    public int currentLevel => _currentLevel;
     public int currentXP = 0;
     [Header("屬性加成")]
     public float attackMultiplier = 1.0f; // 攻擊倍率
 
+
+    void Start()
+    {
+        UpdateStats();
+    }
     // 當升級時，通知其他組件更新
     public void AddXP(int amount)
     {
-        currentXP += amount;
-        if (currentXP >= CalculateNextLevelXP())
+      currentXP += amount;
+        Debug.Log($"獲得經驗：{amount}，當前經驗：{currentXP}/{CalculateNextLevelXP()}");
+
+        // 使用 while 是為了防止一次獲得大量經驗時可以「連升多等」
+        while (currentXP >= CalculateNextLevelXP())
         {
-            UpdateStats();
+            LevelUp();
         }
     }
+    void LevelUp()
+    {
+        currentXP -= CalculateNextLevelXP(); // 扣除升級所需經驗
+        _currentLevel++; // 真正增加等級
+        
+        UpdateStats(); // 更新血量與攻擊力
+        
+        // 這裡可以呼叫 HeroActions 檢查武器解鎖
+        HeroActions hero = GetComponent<HeroActions>();
+        if (hero != null)
+        {
+            // hero.CheckWeaponUnlock(currentLevel); // 假設你在 HeroActions 有寫這行
+        }
 
-   public void UpdateStats(int currentLevel)
+        Debug.Log($"<color=yellow>恭喜升級！當前等級：{currentLevel}</color>");
+    }
+   public void UpdateStats()
     {
         // 1. 更新血量 (如之前所述)
         Health h = GetComponent<Health>();
         if (h != null)
         {
-            h.maxHP = 100f + (currentLevel * 20f);
-            h.currentHP = h.maxHP;
+            float newMax = 100f + (_currentLevel * 20f);
+            // 改用 Function 呼叫，解決錯誤 2 (權限問題)
+            h.SetHealthFromLevel(newMax);
         }
-
         // 2. 更新攻擊加成 (每升一等增加 10% 攻擊力)
         // 公式：1.0 + (等級-1) * 0.1
-        attackMultiplier = 1.0f + (currentLevel - 1) * 0.1f;
+        attackMultiplier = 1.0f + (_currentLevel - 1) * 0.1f;
         
-        Debug.Log($"等級 {currentLevel}：血量上限為 {100 + (currentLevel * 20)}，攻擊倍率為 {attackMultiplier}x");
+        Debug.Log($"等級 {currentLevel}：血量上限為 {100 + (_currentLevel * 20)}，攻擊倍率為 {attackMultiplier}x");
     }
 
-    int CalculateNextLevelXP() => level * 100; // 簡單的經驗公式
+    int CalculateNextLevelXP() => _currentLevel * 100; // 簡單的經驗公式
 }
