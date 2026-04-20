@@ -162,31 +162,47 @@ public class HeroActions : MonoBehaviour
     {
         _animator.SetTrigger("Attack");
 
-        // 1. 設定冷卻與當前武器參數
-        float cooldown = (currentWeapon == "Bow") ? bowCooldown : swordCooldown;
-        float range = (currentWeapon == "Bow") ? bowRange : swordRange;
+        // 1. 根據目前武器決定數值
+        float range;
+        float cooldown;
+        
+        if (currentWeapon == "Bow") {
+            range = bowRange;
+            cooldown = bowCooldown;
+        } else if (currentWeapon == "Sword") {
+            range = swordRange;
+            cooldown = swordCooldown;
+        } else {
+            // 拳頭模式 (None)
+            range = playerAttackRange; // 使用基礎範圍
+            cooldown = 0.5f; 
+        }
+        
         nextAttackTime = Time.time + cooldown;
 
         float multiplier = (_levelSystem != null) ? _levelSystem.attackMultiplier : 1.0f;
         float finalDamage = playerDamage * multiplier;
 
-        // 2. 搜尋範圍內所有敵人
+        // 2. 搜尋範圍內所有 Collider
         Collider[] hitEnemies = Physics.OverlapSphere(transform.position, range);
+        
         foreach (Collider enemy in hitEnemies)
         {
+            // 檢查標籤
             if (enemy.CompareTag("Enemy"))
             {
-                // 3. 指向性判定 (核心邏輯)
-                // 計算大俠到敵人的方向向量
-                Vector3 directionToEnemy = (enemy.transform.position - transform.position).normalized;
-                // 計算大俠正前方與敵人方向的夾角
-                float angle = Vector3.Angle(transform.forward, directionToEnemy);
+                // 3. 指向性判定優化 (忽略高度差)
+                Vector3 dirToEnemy = (enemy.transform.position - transform.position);
+                dirToEnemy.y = 0; // 關鍵：強制抹平 Y 軸，只看平面方向
+                Vector3 myForward = transform.forward;
+                myForward.y = 0;
 
-                // 如果角度在設定範圍內 (例如正前方左右各 30 度)
+                float angle = Vector3.Angle(myForward, dirToEnemy.normalized);
+
+                // 判斷角度
                 if (angle <= attackAngle / 2f)
                 {
-                    // 4. 如果是弓箭，還可以加一個「遮蔽檢查」(Raycast)
-                    // 確保大俠跟敵人之間沒有牆壁
+                    // 4. 執行傷害
                     if (currentWeapon == "Bow")
                     {
                         if (HasLineOfSight(enemy.transform))
@@ -198,6 +214,10 @@ public class HeroActions : MonoBehaviour
                     {
                         ApplyDamage(enemy, finalDamage);
                     }
+                }
+                else {
+                    // 如果沒打中，Debug 出來看看角度差多少
+                    Debug.Log($"角度不對：當前角度 {angle}，允許範圍 {attackAngle / 2f}");
                 }
             }
         }
@@ -238,7 +258,9 @@ public class HeroActions : MonoBehaviour
         if (eHealth != null)
         {
             eHealth.TakeDamage(damage);
-            Debug.Log($"擊中敵人！造成 {damage} 傷害");
+            // 在畫面上畫一條綠線，代表打中了
+            Debug.DrawLine(transform.position + Vector3.up, enemy.transform.position + Vector3.up, Color.green, 1.0f);
+            Debug.Log($"<color=cyan>成功擊中！</color> {enemy.name} 受到 {damage} 傷害");
         }
     }
 
