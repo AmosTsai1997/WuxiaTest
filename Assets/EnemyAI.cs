@@ -109,26 +109,45 @@ public class EnemyAI : MonoBehaviour
 
     void AttackPlayer()
     {
-            if (Time.time >= _nextAttackTime)
+        if (Time.time >= _nextAttackTime)
         {
-             _animator.SetFloat("Speed", 0);
-            // 這裡設定一個冷卻，避免瘋狂攻擊
+            _animator.SetFloat("Speed", 0);
+            
+            // 1. 先播放攻擊動畫 (讓玩家看到前搖)
             _animator.SetTrigger("Attack"); 
-            // 讓敵人面向玩家
+            
+            // 2. 讓敵人面向玩家
             Vector3 lookPos = player.position - transform.position;
             lookPos.y = 0;
             transform.rotation = Quaternion.LookRotation(lookPos);
-            
-            // 簡單判斷：如果砍下去時玩家還在範圍內，就扣血
-            if (Vector3.Distance(transform.position, player.position) <= attackRange + 0.5f)
-            {
-                Health playerHealth = player.GetComponent<Health>();
-                if (playerHealth != null)
-                {
-                    playerHealth.TakeDamage(damage);
-                }
-            }
+
+            // 3. 重點：不要直接扣血，改用延遲呼叫
+            // 假設動畫揮下去的時間大約是 0.5 秒，這 0.5 秒就是大俠的生存空檔
+            Invoke("ApplyDamageToPlayer", 0.5f); 
+
+            // 4. 設定下次冷卻時間
             _nextAttackTime = Time.time + attackCooldown;
+        }
+    }
+
+    // 建立一個專門處理扣血邏輯的函式
+    void ApplyDamageToPlayer()
+    {
+        // 在真正扣血前，再判定一次距離
+        // 如果大俠這 0.5 秒內跑開了，就不會受傷！
+        float currentDist = Vector3.Distance(transform.position, player.position);
+        if (currentDist <= attackRange + 0.8f) // 給一點點判定的寬容值
+        {
+            Health playerHealth = player.GetComponent<Health>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage);
+                Debug.Log("<color=red>大俠被擊中了！</color>");
+            }
+        }
+        else
+        {
+            Debug.Log("<color=green>大俠躲過了怪物的攻擊！</color>");
         }
     }
 

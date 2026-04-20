@@ -134,12 +134,23 @@ public class NPCInteraction : MonoBehaviour
     }
 
     public void CompleteQuest()
-    {
-        // 尋找場景中的大俠
-        HeroActions hero = GameObject.FindGameObjectWithTag("Player").GetComponent<HeroActions>();
-        if (hero != null)
-        {
-            hero.AddXP(500); // 一次給 500 經驗，讓測試時能快速跳等
+    {   // 1. 直接在大俠身上找 LevelSystem
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {   
+            // 2. 嘗試取得等級系統組件
+            LevelSystem lvSys = player.GetComponent<LevelSystem>();
+
+            if (lvSys != null)
+            {
+                // 3. 呼叫公開方法傳入 500 經驗值
+                lvSys.AddXP(500);
+                Debug.Log("任務完成！成功發放 500 經驗值給大俠。");
+            }
+            else
+            {
+                Debug.LogError("找不到 LevelSystem 組件，請確認 Player 物件上有掛載腳本。");
+            }
         }
     }
 }

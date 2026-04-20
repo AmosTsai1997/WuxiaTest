@@ -5,80 +5,97 @@ public class HeroActions : MonoBehaviour
 {
     private Animator _animator;
     private CharacterController _controller;
-    private SimpleGravity _gravityScript;  // 引用另外一個重力腳本
-    private bool _isGrounded;    // 用來存儲角色是否踩在地上的狀態
-    private Vector3 _velocity;   // 用來存儲角色的垂直速度（跳躍與重力的力道）
-    [Header("攻擊力與攻擊範圍")]
-    public float playerDamage = 30f;    // 大俠攻擊力比較高，三刀一隻
-    public float playerAttackRange = 2f;// 攻擊範圍
-    [Header("移動速度與跳躍高度")]
-    public float speed = 5f;            //移動速度
-    public float jumpHeight = 0.1f;     // 跳躍高度
-    public float turnSpeed = 720f;      //轉向速度
-    [Header("等級與經驗值")]
-    public int level = 1;
-    public int currentXP = 0;
-    public int xpToNextLevel = 100; // 第一等升級需要的經驗
+    private SimpleGravity _gravityScript;
+    private LevelSystem _levelSystem; // 引用新的等級系統
+
+    [Header("基礎攻擊力與範圍")]
+    public float playerDamage = 30f;    
+    public float playerAttackRange = 2f;
+
+    [Header("移動與跳躍")]
+    public float speed = 5f;            
+    public float jumpHeight = 2.0f; // 修正：0.1f 太低了，改回 2.0f 較合適     
+    public float turnSpeed = 720f;      
+
     [Header("武器系統")]
-    public GameObject swordModel; // 拖入劍的模型
-    public GameObject bowModel;   // 拖入弓的模型
+    public GameObject swordModel; 
+    public GameObject bowModel;   
     public string currentWeapon = "None";
+
+    [Header("戰鬥節奏設定")]
+    public float nextAttackTime = 0.8f; // 下一次可以攻擊的時間
+    public float swordCooldown = 1f; // 劍的間隔 (秒)
+    public float bowCooldown = 1.2f;   // 弓的間隔 (秒)
 
     void Start()
     {
         _animator = GetComponent<Animator>();
         _controller = GetComponent<CharacterController>();
         _gravityScript = GetComponent<SimpleGravity>();
+        _levelSystem = GetComponent<LevelSystem>(); // 初始化引用
     }
 
-void Update()
+    void Update()
     {
-        // 取得 Health 腳本組件
         Health health = GetComponent<Health>();
-
-        // 如果死了，檢查是否按下 R 鍵復活
         if (health != null && health.isDead)
         {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                Respawn();
-            }
-            return; // 死了就不執行下面的移動邏輯
+            if (Input.GetKeyDown(KeyCode.R)) Respawn();
+            return; 
         }
-        // 移動處理
-        // 1. 計算水平位移 (WASD)
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        Vector3 inputDir = new Vector3(h, 0, v).normalized;
-        // 準備一個最終的位移向量
-        Vector3 finalVelocity = Vector3.zero;
-        // 2.處理跳躍邏輯 (提前到這裡) ---
-        // 必須在 Move 之前就告訴重力腳本我們要跳
+
+        // 1. 處理跳躍
         if (Input.GetButtonDown("Jump") && _controller.isGrounded)
         {
             if (_gravityScript != null)
             {
-                // 呼叫重力腳本的跳躍方法
                 _gravityScript.SetJumpVelocity(jumpHeight); 
                 _animator.SetTrigger("Jump");
             }
         }
+        // 2. 處理移動
+        HandleMovement();
 
-        // 3. 處理水平移動 (參考攝影機方向)
+        // 3. 檢查武器解鎖 (配合 LevelSystem)
+        if (_levelSystem != null)
+        {
+            CheckWeaponUnlock(_levelSystem.currentLevel);
+        }
+
+        // 4按鍵切換武器 (鍵盤 1 和 2)
+        HandleWeaponSwitch();
+
+        // 5. 攻擊邏輯
+        if (Input.GetMouseButtonDown(0))
+        {
+            // 檢查現在時間是否已經超過了「下次可攻擊時間」
+            if (Time.time >= nextAttackTime)
+            {
+                DoAttack();
+            }
+            else
+            {
+                Debug.Log("攻擊冷卻中...");
+            }
+        }
+    }
+    void HandleMovement()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+        Vector3 inputDir = new Vector3(h, 0, v).normalized;
+        Vector3 finalVelocity = Vector3.zero;
+
         if (inputDir.magnitude >= 0.1f)
         {
             Vector3 camForward = Camera.main.transform.forward;
             Vector3 camRight = Camera.main.transform.right;
-            camForward.y = 0;
-            camRight.y = 0;
-            camForward.Normalize();
-            camRight.Normalize();
+            camForward.y = 0; camRight.y = 0;
+            camForward.Normalize(); camRight.Normalize();
 
-            // 計算水平速度向量
             Vector3 moveDir = (camForward * v + camRight * h);
             finalVelocity = moveDir * speed;
 
-            // 轉向邏輯
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             _animator.SetFloat("Speed", speed);
@@ -88,40 +105,63 @@ void Update()
             _animator.SetFloat("Speed", 0f);
         }
 
-        // 4. 處理垂直移動 (重力) 
-        // 注意：這裡必須在 if 外面，且是「疊加」到 finalVelocity 上
         if (_gravityScript != null)
         {
-            // 直接把 SimpleGravity 算好的速度填入 Y 軸
             finalVelocity.y = _gravityScript.verticalVelocity;
         }
 
-        // 5. 【全劇終】整個 Update 只能有這一個 Move
-        // 這樣水平跟垂直才不會互相打架
         _controller.Move(finalVelocity * Time.deltaTime);
+    }
+    void HandleWeaponSwitch()
+    {
+        if (_levelSystem == null) return;
 
-        //  攻擊邏輯
-        if (Input.GetMouseButtonDown(0))
+        // 按下 1：切換到劍 (需 LV 10)
+        if (Input.GetKeyDown(KeyCode.Alpha1) && _levelSystem.currentLevel >= 10)
         {
-            DoAttack();
+            EquipWeapon("Sword");
+        }
+        
+        // 按下 2：切換到弓 (需 LV 20)
+        if (Input.GetKeyDown(KeyCode.Alpha2) && _levelSystem.currentLevel >= 20)
+        {
+            EquipWeapon("Bow");
         }
     }
 
-
+    void EquipWeapon(string weaponName)
+    {
+        if (weaponName == "Sword")
+        {
+            currentWeapon = "Sword";
+            if (swordModel != null) swordModel.SetActive(true);
+            if (bowModel != null) bowModel.SetActive(false);
+            
+            _animator.SetInteger("WeaponType", 1); // 告訴動畫師：現在拿劍
+            playerDamage = 50f;
+            playerAttackRange = 2f;
+        }
+        else if (weaponName == "Bow")
+        {
+            currentWeapon = "Bow";
+            if (swordModel != null) swordModel.SetActive(false);
+            if (bowModel != null) bowModel.SetActive(true);
+            
+            _animator.SetInteger("WeaponType", 2); // 告訴動畫師：現在拿弓
+            playerDamage = 40f;
+            playerAttackRange = 15f;
+        }
+        Debug.Log($"切換武器為：{weaponName}");
+    }
     void DoAttack()
     {
-        _animator.SetTrigger("Attack");
+        // 1. 根據武器設定冷卻時間
+        float cooldown = (currentWeapon == "Bow") ? bowCooldown : swordCooldown;
+        nextAttackTime = Time.time + cooldown; // 更新下次可攻擊的時間點
 
-        // 取得等級系統中的倍率，如果沒掛腳本就預設為 1
-        float currentMultiplier = 1.0f;
-        LevelSystem lvSys = GetComponent<LevelSystem>();
-        if (lvSys != null)
-        {
-            currentMultiplier = lvSys.attackMultiplier;
-        }
-
-        // 最終傷害 = 武器基礎傷害 * 等級倍率
-        float finalDamage = playerDamage * currentMultiplier;
+        // 2. 傷害計算邏輯 (維持不變)
+        float multiplier = (_levelSystem != null) ? _levelSystem.attackMultiplier : 1.0f;
+        float finalDamage = playerDamage * multiplier;
 
         Collider[] hitEnemies = Physics.OverlapSphere(transform.position, playerAttackRange);
         foreach (Collider enemy in hitEnemies)
@@ -129,76 +169,19 @@ void Update()
             if (enemy.CompareTag("Enemy"))
             {
                 Health eHealth = enemy.GetComponent<Health>();
-                if (eHealth != null)
-                {
-                    eHealth.TakeDamage(finalDamage);
-                    Debug.Log($"對敵人造成 {finalDamage} 點傷害 (含等級加成)");
-                }
+                if (eHealth != null) eHealth.TakeDamage(finalDamage);
             }
         }
     }
 
-    void Respawn()
+    // 配合 LevelSystem 的等級來解鎖武器
+    public void CheckWeaponUnlock(int currentLevel)
     {
-        Health health = GetComponent<Health>();
-        
-        // 1. 回復血量
-        if (health != null)
-        {
-            // 呼叫 Health 腳本內的復活邏輯 (解決 CS0272 錯誤)
-            health.ResetHealth();
-        }
-        //  恢復滑鼠狀態
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        // 2. 隱藏死亡介面
-        if (health.deathPanel != null)
-        {
-            health.deathPanel.SetActive(false);
-        }
-
-        // 3. 座標重置 (確保不會卡在土裡，Y 高一點)
-        _controller.enabled = false; // 暫時關閉控制器才能強制改座標
-        transform.position = new Vector3(0, 5, 0); 
-        _controller.enabled = true;
-
-        // 4. 動態與腳本重置
-        _animator.Rebind();
-        _animator.Update(0f);
-        Debug.Log("大俠復活成功！");
-    }
-    public void AddXP(int amount)
-    {
-        currentXP += amount;
-        Debug.Log($"獲得經驗值：{amount}，目前總計：{currentXP}");
-
-        if (currentXP >= xpToNextLevel)
-        {
-            LevelUp();
-        }
-    }
-
-    void LevelUp()
-    {
-        level++;
-        currentXP -= xpToNextLevel;
-        xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.2f); // 每一等升級難度增加
-
-        Debug.Log($"恭喜升級！目前等級：{level}");
-
-        // 升級後檢查解鎖
-        CheckWeaponUnlock();
-    }
-    void CheckWeaponUnlock()
-    {
-        // 檢查 10 等解鎖劍
-        if (level >= 10 && currentWeapon == "None")
+        if (currentLevel >= 10 && currentWeapon == "None")
         {
             UnlockWeapon("Sword");
         }
-        // 檢查 20 等解鎖弓
-        if (level >= 20 && currentWeapon != "Bow")
+        if (currentLevel >= 20 && currentWeapon != "Bow")
         {
             UnlockWeapon("Bow");
         }
@@ -211,16 +194,34 @@ void Update()
         {
             if (swordModel != null) swordModel.SetActive(true);
             if (bowModel != null) bowModel.SetActive(false);
-            playerDamage = 50f; // 換劍後攻擊力提升
-            Debug.Log("已解鎖並裝備：劍！");
+            playerDamage = 50f;
+            Debug.Log("解鎖劍：基礎傷害提升至 50");
         }
         else if (type == "Bow")
         {
             if (swordModel != null) swordModel.SetActive(false);
             if (bowModel != null) bowModel.SetActive(true);
-            playerAttackRange = 15f; // 換弓後攻擊範圍大幅增加
-            playerDamage = 40f;      // 弓箭傷害調整
-            Debug.Log("已解鎖並裝備：弓！");
+            playerAttackRange = 15f;
+            playerDamage = 40f;
+            Debug.Log("解鎖弓：攻擊距離大幅提升");
         }
+    }
+
+    void Respawn()
+    {
+        Health health = GetComponent<Health>();
+        if (health != null) health.ResetHealth();
+        
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        if (health.deathPanel != null) health.deathPanel.SetActive(false);
+
+        _controller.enabled = false;
+        transform.position = new Vector3(0, 5, 0); 
+        _controller.enabled = true;
+
+        _animator.Rebind();
+        _animator.Update(0f);
     }
 }

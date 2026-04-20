@@ -35,13 +35,6 @@ public class Health : MonoBehaviour
     {
         if (isDead) return;
 
-        // 【核心邏輯】檢查是否還在無敵時間內
-        if (Time.time < _lastDamageTime + invincibilityDuration)
-        {
-            Debug.Log($"{gameObject.name} 處於無敵狀態，免疫傷害！");
-            return; // 直接跳出，不執行扣血
-        }
-
         // 執行扣血
         _lastDamageTime = Time.time; // 更新最後受傷時間
         currentHP -= damage;
