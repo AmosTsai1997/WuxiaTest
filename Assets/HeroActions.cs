@@ -141,10 +141,10 @@ public class HeroActions : MonoBehaviour
             currentWeapon = "Sword";
             if (swordModel != null) swordModel.SetActive(true);
             if (bowModel != null) bowModel.SetActive(false);
-            
+            Debug.Log("劍模型已設為 Active");
             _animator.SetInteger("WeaponType", 1); // 告訴動畫師：現在拿劍
             playerDamage = 50f;
-            playerAttackRange = 2f;
+            playerAttackRange = 3f;
         }
         else if (weaponName == "Bow")
         {
