@@ -61,12 +61,6 @@ public class HeroActions : MonoBehaviour
         // 2. 處理移動
         HandleMovement();
 
-        // 3. 檢查武器解鎖 (配合 LevelSystem)
-        if (_levelSystem != null)
-        {
-            CheckWeaponUnlock(_levelSystem.currentLevel);
-        }
-
         // 4按鍵切換武器 (鍵盤 1 和 2)
         HandleWeaponSwitch();
 
@@ -136,27 +130,36 @@ public class HeroActions : MonoBehaviour
 
     void EquipWeapon(string weaponName)
     {
+        // 1. 安全檢查：確保兩個模型都存在
+        if (swordModel == null || bowModel == null)
+        {
+            Debug.LogError("錯誤：劍或弓的模型欄位是空的，請確認 Hierarchy 物件已拖入！");
+            return;
+        }
+
+        // 2. 先把所有武器都關掉 (清空狀態)
+        swordModel.SetActive(false);
+        bowModel.SetActive(false);
+
+        // 3. 根據選擇開啟對應武器
         if (weaponName == "Sword")
         {
             currentWeapon = "Sword";
-            if (swordModel != null) swordModel.SetActive(true);
-            if (bowModel != null) bowModel.SetActive(false);
-            Debug.Log("劍模型已設為 Active");
-            _animator.SetInteger("WeaponType", 1); // 告訴動畫師：現在拿劍
+            swordModel.SetActive(true); // 只開劍
+            _animator.SetInteger("WeaponType", 1);
             playerDamage = 50f;
-            playerAttackRange = 3f;
+            playerAttackRange = swordRange;
         }
         else if (weaponName == "Bow")
         {
             currentWeapon = "Bow";
-            if (swordModel != null) swordModel.SetActive(false);
-            if (bowModel != null) bowModel.SetActive(true);
-            
-            _animator.SetInteger("WeaponType", 2); // 告訴動畫師：現在拿弓
+            bowModel.SetActive(true); // 只開弓
+            _animator.SetInteger("WeaponType", 2);
             playerDamage = 40f;
-            playerAttackRange = 15f;
+            playerAttackRange = bowRange;
         }
-        Debug.Log($"切換武器為：{weaponName}");
+
+        Debug.Log($"<color=green>武器切換成功：{weaponName}</color>");
     }
     void DoAttack()
     {
