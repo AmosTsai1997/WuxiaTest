@@ -111,13 +111,29 @@ void Update()
     void DoAttack()
     {
         _animator.SetTrigger("Attack");
+
+        // 取得等級系統中的倍率，如果沒掛腳本就預設為 1
+        float currentMultiplier = 1.0f;
+        LevelSystem lvSys = GetComponent<LevelSystem>();
+        if (lvSys != null)
+        {
+            currentMultiplier = lvSys.attackMultiplier;
+        }
+
+        // 最終傷害 = 武器基礎傷害 * 等級倍率
+        float finalDamage = playerDamage * currentMultiplier;
+
         Collider[] hitEnemies = Physics.OverlapSphere(transform.position, playerAttackRange);
         foreach (Collider enemy in hitEnemies)
         {
             if (enemy.CompareTag("Enemy"))
             {
                 Health eHealth = enemy.GetComponent<Health>();
-                if (eHealth != null) eHealth.TakeDamage(playerDamage);
+                if (eHealth != null)
+                {
+                    eHealth.TakeDamage(finalDamage);
+                    Debug.Log($"對敵人造成 {finalDamage} 點傷害 (含等級加成)");
+                }
             }
         }
     }
@@ -195,7 +211,7 @@ void Update()
         {
             if (swordModel != null) swordModel.SetActive(true);
             if (bowModel != null) bowModel.SetActive(false);
-            playerDamage += 50f; // 換劍後攻擊力提升
+            playerDamage = 50f; // 換劍後攻擊力提升
             Debug.Log("已解鎖並裝備：劍！");
         }
         else if (type == "Bow")
@@ -203,7 +219,7 @@ void Update()
             if (swordModel != null) swordModel.SetActive(false);
             if (bowModel != null) bowModel.SetActive(true);
             playerAttackRange = 15f; // 換弓後攻擊範圍大幅增加
-            playerDamage += 40f;      // 弓箭傷害調整
+            playerDamage = 40f;      // 弓箭傷害調整
             Debug.Log("已解鎖並裝備：弓！");
         }
     }

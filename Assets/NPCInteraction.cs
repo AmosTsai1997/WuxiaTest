@@ -12,7 +12,8 @@ public class NPCInteraction : MonoBehaviour
     public string npcName = "神祕少女";
     public string questInquiry = "這位少俠，村外有哥布林 Boss 作亂，你能幫幫我嗎？";
 
-    [Header("任務設定 (Boss 生成)")]
+    [Header("任務設定 (Eenmy、Boss 生成)")]
+    public GameObject enemyPrefab;    // 拖入你的 Enemy Prefab
     public GameObject bossPrefab;    // 拖入你的 Boss Prefab
     public Vector3 spawnPosition = new Vector3(27f, 5f, 32f); //BOSS 出現點
    // public Transform spawnPoint;     // 拖入一個空的 GameObject 作為生成點
@@ -84,12 +85,12 @@ public class NPCInteraction : MonoBehaviour
         if (actionButtons != null) actionButtons.SetActive(false);
 
         // 2. 生成敵人並同步等級
-        if (playerLevel/5 != 0 && enemyPrefab != null && spawnPoint != null)
+        if (playerLevel/5 != 0 && enemyPrefab != null && spawnPosition != null)
         {
-            GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+            GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
 
             // 呼叫敵人的初始化函式，把大俠的等級傳進去
-            EnemyLevel eLevel = spawnedEnemy.GetComponent<EnemyLevel>();
+            EnemyLevel eLevel = spawnedEnemy.GetComponent<LevelSystem>();
             if (eLevel != null)
             {
                 eLevel.InitializeEnemy(playerLevel);
