@@ -24,6 +24,7 @@ public class HeroActions : MonoBehaviour
     [Header("武器距離設定")]
     public float swordRange = 2.5f; // 劍的距離
     public float bowRange = 15f;    // 弓的距離
+    public float arrowWidth = 0.5f; // 讓箭矢的判定半徑變大 (像是一根粗水管)
     [Range(0, 180)]
     public float attackAngle = 60f; // 攻擊角度 (例如正前方 60 度內才算打到)
 
@@ -230,14 +231,20 @@ public class HeroActions : MonoBehaviour
     bool HasLineOfSight(Transform target)
     {
         RaycastHit hit;
-        Vector3 startPos = transform.position + Vector3.up * 1f; // 從胸口位置射出
+        Vector3 startPos = transform.position + Vector3.up * 1f;
         Vector3 dir = (target.position + Vector3.up * 1f) - startPos;
 
-        if (Physics.Raycast(startPos, dir, out hit, bowRange))
+        // 將 Raycast 改為 SphereCast
+        // 參數：起點, 半徑, 方向, 結果, 距離
+        if (Physics.SphereCast(startPos, arrowWidth, dir.normalized, out hit, bowRange))
         {
-            if (hit.transform == target) return true; // 確實射中敵人
+            // 只要掃到的物件是目標或是標籤為 Enemy 就算中
+            if (hit.transform == target || hit.transform.CompareTag("Enemy"))
+            {
+                return true;
+            }
         }
-        return false; // 被牆壁或障礙物擋住了
+        return false;
     }
     // 測試距離與角度是否合理 可以在Scene 視窗就能看到攻擊扇形。
     void OnDrawGizmosSelected()
