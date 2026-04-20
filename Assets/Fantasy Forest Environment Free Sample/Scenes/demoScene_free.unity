@@ -6623,7 +6623,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b45006f8da4ee0246ac170ac65f060d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSystem
-  _currentLevel: 1
+  _currentLevel: 20
   currentXP: 0
   attackMultiplier: 1
 --- !u!1 &1511412821

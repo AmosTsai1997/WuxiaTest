@@ -21,6 +21,11 @@ public class HeroActions : MonoBehaviour
     public GameObject swordModel; 
     public GameObject bowModel;   
     public string currentWeapon = "None";
+    [Header("武器距離設定")]
+    public float swordRange = 2.5f; // 劍的距離
+    public float bowRange = 15f;    // 弓的距離
+    [Range(0, 180)]
+    public float attackAngle = 60f; // 攻擊角度 (例如正前方 60 度內才算打到)
 
     [Header("戰鬥節奏設定")]
     public float nextAttackTime = 0.8f; // 下一次可以攻擊的時間
@@ -155,22 +160,85 @@ public class HeroActions : MonoBehaviour
     }
     void DoAttack()
     {
-        // 1. 根據武器設定冷卻時間
-        float cooldown = (currentWeapon == "Bow") ? bowCooldown : swordCooldown;
-        nextAttackTime = Time.time + cooldown; // 更新下次可攻擊的時間點
+        _animator.SetTrigger("Attack");
 
-        // 2. 傷害計算邏輯 (維持不變)
+        // 1. 設定冷卻與當前武器參數
+        float cooldown = (currentWeapon == "Bow") ? bowCooldown : swordCooldown;
+        float range = (currentWeapon == "Bow") ? bowRange : swordRange;
+        nextAttackTime = Time.time + cooldown;
+
         float multiplier = (_levelSystem != null) ? _levelSystem.attackMultiplier : 1.0f;
         float finalDamage = playerDamage * multiplier;
 
-        Collider[] hitEnemies = Physics.OverlapSphere(transform.position, playerAttackRange);
+        // 2. 搜尋範圍內所有敵人
+        Collider[] hitEnemies = Physics.OverlapSphere(transform.position, range);
         foreach (Collider enemy in hitEnemies)
         {
             if (enemy.CompareTag("Enemy"))
             {
-                Health eHealth = enemy.GetComponent<Health>();
-                if (eHealth != null) eHealth.TakeDamage(finalDamage);
+                // 3. 指向性判定 (核心邏輯)
+                // 計算大俠到敵人的方向向量
+                Vector3 directionToEnemy = (enemy.transform.position - transform.position).normalized;
+                // 計算大俠正前方與敵人方向的夾角
+                float angle = Vector3.Angle(transform.forward, directionToEnemy);
+
+                // 如果角度在設定範圍內 (例如正前方左右各 30 度)
+                if (angle <= attackAngle / 2f)
+                {
+                    // 4. 如果是弓箭，還可以加一個「遮蔽檢查」(Raycast)
+                    // 確保大俠跟敵人之間沒有牆壁
+                    if (currentWeapon == "Bow")
+                    {
+                        if (HasLineOfSight(enemy.transform))
+                        {
+                            ApplyDamage(enemy, finalDamage);
+                        }
+                    }
+                    else
+                    {
+                        ApplyDamage(enemy, finalDamage);
+                    }
+                }
             }
+        }
+    }
+
+    // 弓箭專用的視線檢查
+    bool HasLineOfSight(Transform target)
+    {
+        RaycastHit hit;
+        Vector3 startPos = transform.position + Vector3.up * 1f; // 從胸口位置射出
+        Vector3 dir = (target.position + Vector3.up * 1f) - startPos;
+
+        if (Physics.Raycast(startPos, dir, out hit, bowRange))
+        {
+            if (hit.transform == target) return true; // 確實射中敵人
+        }
+        return false; // 被牆壁或障礙物擋住了
+    }
+    // 測試距離與角度是否合理 可以在Scene 視窗就能看到攻擊扇形。
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        float range = (currentWeapon == "Bow") ? bowRange : swordRange;
+        
+        // 畫出攻擊距離的圓圈
+        Gizmos.DrawWireSphere(transform.position, range);
+        
+        // 畫出攻擊角度的兩條邊界線
+        Vector3 leftBoundary = Quaternion.Euler(0, -attackAngle / 2, 0) * transform.forward;
+        Vector3 rightBoundary = Quaternion.Euler(0, attackAngle / 2, 0) * transform.forward;
+        
+        Gizmos.DrawLine(transform.position, transform.position + leftBoundary * range);
+        Gizmos.DrawLine(transform.position, transform.position + rightBoundary * range);
+    }
+    void ApplyDamage(Collider enemy, float damage)
+    {
+        Health eHealth = enemy.GetComponent<Health>();
+        if (eHealth != null)
+        {
+            eHealth.TakeDamage(damage);
+            Debug.Log($"擊中敵人！造成 {damage} 傷害");
         }
     }
 
