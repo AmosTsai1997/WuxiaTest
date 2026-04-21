@@ -58,8 +58,18 @@ public class LevelSystem : MonoBehaviour
         // 公式：1.0 + (等級-1) * 0.1
         attackMultiplier = 1.0f + (_currentLevel - 1) * 0.1f;
         
-        Debug.Log($"等級 {currentLevel}：血量上限為 {100 + (_currentLevel * 20)}，攻擊倍率為 {attackMultiplier}x");
+        Debug.Log($"等級 {_currentLevel}：血量上限為 {100 + (_currentLevel * 20)}，攻擊倍率為 {attackMultiplier}x");
     }
-
+    public void SetLevel(int newLevel)
+    {
+        _currentLevel = newLevel;
+        Debug.Log($"等級已更新為 {newLevel}，屬性已同步強化。");
+    }
+        public int GetLevel()
+    {   
+        Debug.Log($"等級資訊已更新。");
+        return currentLevel;
+       
+    }
     int CalculateNextLevelXP() => _currentLevel * 100; // 簡單的經驗公式
 }

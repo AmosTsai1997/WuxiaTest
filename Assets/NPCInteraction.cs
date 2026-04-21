@@ -80,26 +80,26 @@ public class NPCInteraction : MonoBehaviour
         dialogueText.text = $"【{npcName}】: 喔！看來少俠已達 {playerLevel} 等，村外的敵人也變強了，請小心！";
         if (actionButtons != null) actionButtons.SetActive(false);
 
-        // 2. 生成敵人並同步等級
-        if (playerLevel/5 != 0 && enemyPrefab != null && spawnPosition != null)
-        {
-            GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            // 呼叫敵人的初始化函式，把大俠的等級傳進去
-            int eLevel = spawnedEnemy.GetComponent<LevelSystem>().currentLevel;
-            eLevel =playerLevel;
+    // 生成普通敵人並同步等級
+    if (enemyPrefab != null) // Vector3 不能檢查 null，直接檢查 Prefab 即可
+    {
+        GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        
+        // 直接修改組件內的數值
+        spawnedEnemy.GetComponent<LevelSystem>().SetLevel(playerLevel);
+        
+        Debug.Log($"生成了 {playerLevel} 等的強力敵人！");
+    }
 
-            Debug.Log($"生成了 {eLevel} 等的強力敵人！");
-        }
-        // 生成 Boss
-        else 
-        {
-            if (bossPrefab != null && spawnPosition != null)
-            {
-                Instantiate(bossPrefab, spawnPosition, Quaternion.identity);
-                Debug.Log("哥布林 Boss 已降臨！");
-            }
-                
-        }
+    // 生成 Boss 並同步等級
+    if (bossPrefab != null)
+    {
+        GameObject spawnedBoss = Instantiate(bossPrefab, spawnPosition, Quaternion.identity);
+        
+        spawnedBoss.GetComponent<LevelSystem>().SetLevel(playerLevel);
+        
+        Debug.Log($"哥布林 Boss (等級: {playerLevel}) 已降臨！");
+    }
 
         Invoke("EndDialogue", 2f);
     }
