@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [Header("玩家設定")]
     public GameObject playerPrefab;
     public Vector3 villageSpawnPos = new Vector3(25f, 5f, 27f); // 抬高 Y 軸防止掉落
-    public Vector3 largeMapSpawnPos = new Vector3(430f, 25f, 430f);
+    public Vector3 largeMapSpawnPos = new Vector3(440f, 25f, 410f);
 
     [Header("初始地圖重生設定")]
     public GameObject villageEnemyPrefab;
@@ -21,8 +21,9 @@ public class GameManager : MonoBehaviour
     public float villageRespawnTime = 60f;
 
     [Header("大地圖隨機生成設定")]
-    public GameObject largeMapEnemyPrefab; // 拖入大地圖怪
-    public Vector3 largeMapCenter = new Vector3(430f, 22f, 430f);
+    // 修改：改成 GameObject 陣列，這樣可以在 Inspector 設定數量（例如設定為 2，各放一種怪）
+    public GameObject[] largeMapEnemyPrefabs;
+    public Vector3 largeMapCenter = new Vector3(444f, 22f, 410f);
     public float spawnRadius = 50f; // 生成半徑，根據你的地圖大小調整
     public float largeMapRespawnTime = 60f;
 
@@ -112,20 +113,29 @@ public class GameManager : MonoBehaviour
     // --- 大地圖：隨機範圍重生 ---
     IEnumerator LargeMapSpawnRoutine()
     {
-        while (true)
+       while (true)
         {
-            if (largeMapEnemyPrefab != null)
+            // 檢查陣列是否有怪且不為空
+            if (largeMapEnemyPrefabs != null && largeMapEnemyPrefabs.Length > 0)
             {
-                // 計算隨機位置
-                Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
-                Vector3 randomSpawnPos = new Vector3(
-                    largeMapCenter.x + randomCircle.x,
-                    largeMapCenter.y,
-                    largeMapCenter.z + randomCircle.y
-                );
+                // 1. 隨機選取陣列中的其中一個敵人 Prefab
+                int randomIndex = Random.Range(0, largeMapEnemyPrefabs.Length);
+                GameObject selectedEnemy = largeMapEnemyPrefabs[randomIndex];
 
-                Instantiate(largeMapEnemyPrefab, randomSpawnPos, Quaternion.identity);
-                Debug.Log($"大地圖怪已生成於: {randomSpawnPos}");
+                if (selectedEnemy != null)
+                {
+                    // 2. 計算隨機位置
+                    Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
+                    Vector3 randomSpawnPos = new Vector3(
+                        largeMapCenter.x + randomCircle.x,
+                        largeMapCenter.y ,
+                        largeMapCenter.z + randomCircle.y
+                    );
+
+                    // 3. 生成選中的怪
+                    Instantiate(selectedEnemy, randomSpawnPos, Quaternion.identity);
+                    Debug.Log($"大地圖生成了：{selectedEnemy.name} 於 {randomSpawnPos}");
+                }
             }
             yield return new WaitForSeconds(largeMapRespawnTime);
         }
