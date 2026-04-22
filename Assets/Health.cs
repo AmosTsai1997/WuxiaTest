@@ -4,9 +4,6 @@ public class Health : MonoBehaviour
 {
     public float maxHP = 500f;
     public float currentHP{ get; private set; }
-    [Header("無敵幀設定")]
-    public float invincibilityDuration = 1.5f; // 無敵時間長度
-    private float _lastDamageTime = -99f;      // 記錄上一次受傷的時間
     [Header("UI 設定")]
     public Slider hpSlider; // 在 Inspector 把人物的 Slider 拖進來
     public bool isPlayer = false; // 勾選此項代表是大俠
@@ -19,7 +16,7 @@ public class Health : MonoBehaviour
     void Start()
     {
         currentHP = maxHP;
-        _anim = GetComponent<Animator>(); // 初始化！
+        _anim = GetComponent<Animator>(); // 呼叫動畫，初始化！
         _collider = GetComponent<Collider>(); // 取得碰撞體以便死亡時關閉
        
        // 自動尋找：先找腳本同層，再找子物件 (Canvas)
@@ -36,7 +33,6 @@ public class Health : MonoBehaviour
         if (isDead) return;
 
         // 執行扣血
-        _lastDamageTime = Time.time; // 更新最後受傷時間
         currentHP -= damage;
         
         Debug.Log($"{gameObject.name} 受傷！扣除 {damage}，剩餘 {currentHP}");

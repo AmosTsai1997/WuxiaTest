@@ -4764,7 +4764,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1016282959
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4779,10 +4779,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1348697142}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 960, y: -53.945}
+  m_SizeDelta: {x: 172.84, y: 47.89}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1016282960
 MonoBehaviour:
@@ -8874,7 +8874,8 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 793980966679943695, guid: 468ec4c230d19494494cdb5b3882b028, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
