@@ -35,9 +35,11 @@ public class HeroActions : MonoBehaviour
     public float bowCooldown = 1.2f;   // 弓的間隔 (秒)
 
    [Header("旋風斬設定")]
-    public float whirlwindDuration = 1.5f; // 總執行秒數：1.5s
+    public float whirlwindDuration = 2.0f; // 總執行秒數：1.5s
     public float whirlwindInterval = 0.5f; // 動態攻擊間隔：0.5s
     public float whirlwindRadius = 2.0f;   // 稍微加大範圍確保打擊感
+    public float whirlwindCooldown = 5.0f; // <--- 新增：技能 CD 時間
+    private float nextWhirlwindTime = 0f;  // <--- 新增：紀錄下一次可以放技能的時間點
     private bool isWhirlwinding = false;
 
     void Start()
@@ -53,14 +55,22 @@ public class HeroActions : MonoBehaviour
         Health health = GetComponent<Health>();
         if (health != null && health.isDead)
         {   
-            //避免技能持續造傷害
-            isWhirlwinding = false; // 解鎖狀態
-            StopAllCoroutines();    // 立即停止旋風斬的傷害計時器
-            //啟動重生
-            if (Input.GetKeyDown(KeyCode.R)) Respawn();
-            return; 
-        }
+            if (isWhirlwinding)
+            {
+                isWhirlwinding = false;
+                _animator.SetBool("isWhirlwinding", false);
+                StopAllCoroutines(); 
+            }
 
+            // 啟動重生：檢測 R 鍵
+            if (Input.GetKeyDown(KeyCode.R)) 
+            {
+                Debug.Log("收到重生指令：R");
+                Respawn();
+            }
+            return;
+        }
+        
         // 1. 處理跳躍
         if (Input.GetButtonDown("Jump") && _controller.isGrounded)
         {
@@ -90,10 +100,27 @@ public class HeroActions : MonoBehaviour
             }
         }
 
-        // 6. 監測 Q 鍵啟動技能
+        // 6. 監測 Q 鍵啟動技能(旋風斬)
         if (Input.GetKeyDown(KeyCode.Q) && !isWhirlwinding)
         {
-            StartCoroutine(WhirlwindRoutine());
+            if (currentWeapon == "Sword")
+            {
+                // 檢查是否冷卻完畢
+                if (Time.time >= nextWhirlwindTime)
+                {
+                    StartCoroutine(WhirlwindRoutine());
+                }
+                else
+                {
+                    // 在 Console 顯示還剩幾秒，方便除錯
+                    float cdLeft = nextWhirlwindTime - Time.time;
+                    Debug.Log($"<color=orange>旋風斬冷卻中... 剩餘 {cdLeft:F1} 秒</color>");
+                }
+            }
+            else
+            {
+                Debug.Log("必須裝備【劍】才能使用旋風斬！");
+            }
         }
     }
     void HandleMovement()
@@ -323,56 +350,62 @@ public class HeroActions : MonoBehaviour
             Debug.Log("解鎖弓：攻擊距離大幅提升");
         }
     }
-    //復活邏輯
+    //  復活邏輯
     void Respawn()
     {
         Health health = GetComponent<Health>();
-        if (health != null) health.ResetHealth();
+        if (health != null) 
+        {
+            health.ResetHealth(); // 重要：此方法內必須包含 isDead = false;
+        }
         
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         if (health.deathPanel != null) health.deathPanel.SetActive(false);
 
+        // 瞬間傳送需先禁用 Controller
         _controller.enabled = false;
-        transform.position = new Vector3(0, 5, 0); 
+        transform.position = new Vector3(440, 5, 400); 
         _controller.enabled = true;
 
+        // 重置動畫狀態機
         _animator.Rebind();
         _animator.Update(0f);
+        
+        Debug.Log("大俠已在座標 (0, 5, 0) 重生");
     }
     // 旋風斬技能 Q
     IEnumerator WhirlwindRoutine()
     {   
         if(  currentWeapon == "Sword")
         {
-        isWhirlwinding = true;
-        
-        // 1. 播放動畫 (請確認你的 Animator 中有 "Whirlwind" 這個 Trigger)
-        _animator.SetTrigger("Whirlwind");
-        _animator.SetBool("isWhirlwinding", true);
-        float elapsed = 0f;
-        // 計算單次轉圈的傷害：攻擊力 * 間隔 (例如 50 * 0.5 = 25)
-        // 總共會執行 3 次 (1.5 / 0.5 = 3)，總傷害為 75
-        float damagePerRotation = playerDamage * whirlwindInterval;
+            isWhirlwinding = true;
 
-        Debug.Log($"啟動旋風斬！預計執行 {whirlwindDuration} 秒，每次傷害：{damagePerRotation}");
-        
-        while (elapsed < whirlwindInterval )
-        {
-            // 2. 執行範圍傷害計算
-            ApplyCircleDamage(damagePerRotation);
+            // 進入 CD：設定下一次可以施放的時間 (目前時間 + CD 時間)
+            nextWhirlwindTime = Time.time + whirlwindCooldown;
 
-            yield return new WaitForSeconds(whirlwindInterval);
-            elapsed += whirlwindInterval;
+            // 【防卡死機制】：強制清除殘留的 Trigger，避免 Animator 錯亂
+            _animator.ResetTrigger("Whirlwind");
 
-            // 3. 等待 0.5 秒（配合你說的動畫一圈時間）
-            yield return new WaitForSeconds(whirlwindInterval);
-            elapsed += whirlwindInterval;
-        }
-        _animator.SetBool("isWhirlwinding", false);
-        isWhirlwinding = false;
-        Debug.Log("旋風斬結束");
+            _animator.SetTrigger("Whirlwind");
+            _animator.SetBool("isWhirlwinding", true);
+
+            float elapsed = 0f;
+            // 每圈傷害 = 基礎傷害 * 間隔 (例如 50 * 0.5 = 25)
+            float damagePerRotation = playerDamage * whirlwindInterval;
+
+           Debug.Log($"啟動旋風斬！造成 {damagePerRotation} 傷害/次。");
+            
+            // 修正：條件改為總持續時間
+            while (elapsed < whirlwindDuration)
+            {
+                ApplyCircleDamage(damagePerRotation);
+                // 修正：只保留一個等待，確保頻率正確
+                yield return new WaitForSeconds(whirlwindInterval);
+                elapsed += whirlwindInterval;
+            }
+
+            _animator.SetBool("isWhirlwinding", false);
+            isWhirlwinding = false;
+            Debug.Log("旋風斬結束，進入冷卻狀態。");
         }
     }
     // 旋風斬傷害
