@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(CharacterController))]
 public class HeroActions : MonoBehaviour
@@ -33,6 +34,12 @@ public class HeroActions : MonoBehaviour
     public float swordCooldown = 1f; // 劍的間隔 (秒)
     public float bowCooldown = 1.2f;   // 弓的間隔 (秒)
 
+   [Header("旋風斬設定")]
+    public float whirlwindDuration = 1.5f; // 總執行秒數：1.5s
+    public float whirlwindInterval = 0.5f; // 動態攻擊間隔：0.5s
+    public float whirlwindRadius = 2.0f;   // 稍微加大範圍確保打擊感
+    private bool isWhirlwinding = false;
+
     void Start()
     {
         _animator = GetComponent<Animator>();
@@ -42,10 +49,14 @@ public class HeroActions : MonoBehaviour
     }
 
     void Update()
-    {
+    {   
         Health health = GetComponent<Health>();
         if (health != null && health.isDead)
-        {
+        {   
+            //避免技能持續造傷害
+            isWhirlwinding = false; // 解鎖狀態
+            StopAllCoroutines();    // 立即停止旋風斬的傷害計時器
+            //啟動重生
             if (Input.GetKeyDown(KeyCode.R)) Respawn();
             return; 
         }
@@ -77,6 +88,12 @@ public class HeroActions : MonoBehaviour
             {
                 Debug.Log("攻擊冷卻中...");
             }
+        }
+
+        // 6. 監測 Q 鍵啟動技能
+        if (Input.GetKeyDown(KeyCode.Q) && !isWhirlwinding)
+        {
+            StartCoroutine(WhirlwindRoutine());
         }
     }
     void HandleMovement()
@@ -163,7 +180,7 @@ public class HeroActions : MonoBehaviour
         Debug.Log($"<color=green>武器切換成功：{weaponName}</color>");
     }
     void DoAttack()
-    {
+    {   
         _animator.SetTrigger("Attack");
 
         // 1. 根據目前武器決定數值
@@ -306,7 +323,7 @@ public class HeroActions : MonoBehaviour
             Debug.Log("解鎖弓：攻擊距離大幅提升");
         }
     }
-
+    //復活邏輯
     void Respawn()
     {
         Health health = GetComponent<Health>();
@@ -323,5 +340,61 @@ public class HeroActions : MonoBehaviour
 
         _animator.Rebind();
         _animator.Update(0f);
+    }
+    // 旋風斬技能 Q
+    IEnumerator WhirlwindRoutine()
+    {   
+        if(  currentWeapon == "Sword")
+        {
+        isWhirlwinding = true;
+        
+        // 1. 播放動畫 (請確認你的 Animator 中有 "Whirlwind" 這個 Trigger)
+        _animator.SetTrigger("Whirlwind");
+        _animator.SetBool("isWhirlwinding", true);
+        float elapsed = 0f;
+        // 計算單次轉圈的傷害：攻擊力 * 間隔 (例如 50 * 0.5 = 25)
+        // 總共會執行 3 次 (1.5 / 0.5 = 3)，總傷害為 75
+        float damagePerRotation = playerDamage * whirlwindInterval;
+
+        Debug.Log($"啟動旋風斬！預計執行 {whirlwindDuration} 秒，每次傷害：{damagePerRotation}");
+        
+        while (elapsed < whirlwindInterval )
+        {
+            // 2. 執行範圍傷害計算
+            ApplyCircleDamage(damagePerRotation);
+
+            yield return new WaitForSeconds(whirlwindInterval);
+            elapsed += whirlwindInterval;
+
+            // 3. 等待 0.5 秒（配合你說的動畫一圈時間）
+            yield return new WaitForSeconds(whirlwindInterval);
+            elapsed += whirlwindInterval;
+        }
+        _animator.SetBool("isWhirlwinding", false);
+        isWhirlwinding = false;
+        Debug.Log("旋風斬結束");
+        }
+    }
+    // 旋風斬傷害
+    void ApplyCircleDamage(float damagePerRotation)
+    {
+        // 物理圓形偵測：找出半徑 1.5m 內的所有碰撞體
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, whirlwindRadius);
+        
+        foreach (var hitCollider in hitColliders)
+        {
+            // 檢查是否為怪物 (假設你的怪物有 EnemyHealth 腳本或 Tag 為 Enemy)
+            if (hitCollider.CompareTag("Enemy"))
+            {
+                // 取得怪物身上的 Health 腳本並扣血
+                // 這裡假設你的怪物腳本叫 EnemyStatus，並且有個 TakeDamage 方法
+                var enemy = hitCollider.GetComponent<Health>(); 
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(damagePerRotation);
+                    Debug.Log($"[技能] 擊中 {hitCollider.name}，造成 {damagePerRotation} 傷害");
+                }
+            }
+        }
     }
 }
