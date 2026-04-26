@@ -18,7 +18,7 @@ public class LevelSystem : MonoBehaviour
 
 
     void Start()
-    {
+    {   
         UpdateStats();
         UpdateUI();
     }

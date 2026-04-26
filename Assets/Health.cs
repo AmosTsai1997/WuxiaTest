@@ -21,7 +21,6 @@ public class Health : MonoBehaviour
         currentHP = maxHP;
         _anim = GetComponent<Animator>(); // 呼叫動畫，初始化！
         _collider = GetComponent<Collider>(); // 取得碰撞體以便死亡時關閉
-
         // 初始化 UI 設定
         InitUI();
         UpdateUI();
