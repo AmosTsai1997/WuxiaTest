@@ -142,7 +142,11 @@ public class HeroActions : MonoBehaviour
 
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-            _animator.SetFloat("Speed", speed);
+            // --- 修正：旋風斬期間不更新 Speed 參數 ---
+            if (!isWhirlwinding)
+            {
+                _animator.SetFloat("Speed", speed);
+            }
         }
         else
         {

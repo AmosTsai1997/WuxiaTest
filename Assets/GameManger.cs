@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
 {
     public GameObject tutorialPanel; // 拖入你的 TutorialPanel
     public Button startButton;      // 拖入你的 StartButton
-    public GameObject enemyPrefab;
     public static GameManager Instance;
 
     [Header("玩家設定")]

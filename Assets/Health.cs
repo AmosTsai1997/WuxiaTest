@@ -1,8 +1,9 @@
 using UnityEngine;
-using UnityEngine.UI; // 必須引用 UI 命名空間
+using UnityEngine.UI; 
+
 public class Health : MonoBehaviour
 {
-    public float maxHP = 500f;
+    public float maxHP ;
     public float currentHP{ get; private set; }
     [Header("UI 設定")]
     public Slider hpSlider; // 在 Inspector 把人物的 Slider 拖進來
@@ -63,6 +64,8 @@ public class Health : MonoBehaviour
         {
             if (hpSlider != null)
             {
+                // 關鍵：這行能確保 Slider 的刻度與你當前的最大血量一致
+                hpSlider.maxValue = maxHP;
                 hpSlider.value = currentHP;
             }
         }
