@@ -81,7 +81,7 @@ public class NPCInteraction : MonoBehaviour
         if (actionButtons != null) actionButtons.SetActive(false);
 
     // 生成普通敵人並同步等級
-    if (enemyPrefab != null) // Vector3 不能檢查 null，直接檢查 Prefab 即可
+    if (enemyPrefab != null) // 直接檢查 Prefab 即可
     {
         GameObject spawnedEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
         
