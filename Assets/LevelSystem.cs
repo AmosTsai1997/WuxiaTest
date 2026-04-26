@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro; 
+
 public class LevelSystem : MonoBehaviour
 {   
     [Header("等級資訊")]
@@ -8,6 +10,9 @@ public class LevelSystem : MonoBehaviour
     // 提供一個 public 的唯讀接口，讓其他腳本（如 NPC 或 UI）可以讀取等級
     public int currentLevel => _currentLevel;
     public int currentXP = 0;
+    [Header("UI 連結")]
+    public Slider expSlider;          // 拖入左上角的經驗值 Slider
+    public TextMeshProUGUI levelText; // 顯示 "LV. 1" 的文字
     [Header("屬性加成")]
     public float attackMultiplier = 1.0f; // 攻擊倍率
 
@@ -15,6 +20,7 @@ public class LevelSystem : MonoBehaviour
     void Start()
     {
         UpdateStats();
+        UpdateUI();
     }
     // 當升級時，通知其他組件更新
     public void AddXP(int amount)
@@ -72,4 +78,18 @@ public class LevelSystem : MonoBehaviour
        
     }
     int CalculateNextLevelXP() => _currentLevel * 100; // 簡單的經驗公式
+
+    void UpdateUI()
+    {
+        if (expSlider != null)
+        {
+            expSlider.maxValue = CalculateNextLevelXP();
+            expSlider.value = currentXP;
+        }
+
+        if (levelText != null)
+        {
+            levelText.text = "LV. " + currentLevel;
+        }
+    }
 }

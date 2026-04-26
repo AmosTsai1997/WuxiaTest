@@ -12,21 +12,33 @@ public class Health : MonoBehaviour
     private Collider _collider;
     [Header("死亡設定")]
     public GameObject deathPanel; // 在 Inspector 拖入剛才做的 DeathPanel
+    [Header("獎勵設定")]
+    public int expReward = 50;
 
     void Start()
     {
         currentHP = maxHP;
         _anim = GetComponent<Animator>(); // 呼叫動畫，初始化！
         _collider = GetComponent<Collider>(); // 取得碰撞體以便死亡時關閉
-       
-       // 自動尋找：先找腳本同層，再找子物件 (Canvas)
-        if (hpSlider == null)
+
+        // 初始化 UI 設定
+        InitUI();
+        UpdateUI();
+    }
+    void InitUI()
+    {
+        // 如果是小怪且沒手動指定 Slider，嘗試找尋子物件中的血條 (血條頂在頭上那種)
+        if (!isPlayer && hpSlider == null)
         {
             hpSlider = GetComponentInChildren<Slider>();
         }
-        UpdateUI();
-    }
 
+        if (hpSlider != null)
+        {
+            hpSlider.maxValue = maxHP; // 這裡直接用數值，不用百分比更精確
+            hpSlider.value = currentHP;
+        }
+    }
     // 這是受傷 API
     public void TakeDamage(float damage)
     {
@@ -34,19 +46,11 @@ public class Health : MonoBehaviour
 
         // 執行扣血
         currentHP -= damage;
-        
+        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+
         Debug.Log($"{gameObject.name} 受傷！扣除 {damage}，剩餘 {currentHP}");
 
         UpdateUI();
-        
-        // --- 關鍵修正：嘗試尋找頭上的 Slider 並更新 ---
-        // 假設 Slider 是敵人物件的子物件
-        Slider healthBar = GetComponentInChildren<Slider>();
-        if (healthBar != null)
-        {
-            healthBar.value = currentHP / maxHP; // 如果 Slider 範圍是 0~1
-            // 或者 healthBar.value = currentHP; // 如果 Slider 範圍是 0~MaxHP
-        }
 
         if (currentHP <= 0) Die();
         else
@@ -59,8 +63,7 @@ public class Health : MonoBehaviour
         {
             if (hpSlider != null)
             {
-                // 將 Slider value 設為百分比 (0 到 1)
-                hpSlider.value = currentHP / maxHP;
+                hpSlider.value = currentHP;
             }
         }
     void Die()
@@ -118,7 +121,20 @@ public class Health : MonoBehaviour
              }            
             gameObject.SetActive(false);
         }
+        // 如果這隻是怪物，且是被玩家打死的
+        if (!isPlayer)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                LevelSystem ls = player.GetComponent<LevelSystem>();
+                if (ls != null)
+                {
+                    ls.AddXP(expReward); // 給玩家經驗值
+                }
+            }
 
+        }
     }
     public void ResetHealth()
     {
