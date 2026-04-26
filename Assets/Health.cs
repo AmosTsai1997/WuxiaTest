@@ -91,18 +91,23 @@ public class Health : MonoBehaviour
             // 先把所有觸發器重設，防止積壓的訊號觸發轉場
             _anim.ResetTrigger("Attack");
             _anim.ResetTrigger("Hurt");
-            
             // 如果你有用 Float 控制 Speed，強制歸零，防止轉回 Move/Idle
-            _anim.SetFloat("Speed", 0); 
-            
+            _anim.SetFloat("Speed", 0);
+
             // 關鍵動作：直接播放 Die，並且「關閉轉場」
-            _anim.Play("Die", 0, 0f);
-            Debug.Log("觸發死亡動畫！");
+            _anim.SetTrigger("Die");
+            // --- Console 證據 1 ---
+            Debug.Log($"<color=cyan>[Health]</color> {gameObject.name} 成功觸發 Die Animator Trigger。");
+        }
+        else
+        {
+            // --- Console 證據 2：重大線索 ---
+            Debug.LogWarning($"<color=red>[Health 警告]</color> {gameObject.name} 倒下了，但是<color=yellow>找不到任何 Animator 組件</color>（包括子物件）！死亡動畫無法播放。");
         }
 
-            // 4. 關閉物理特性，防止被推擠或偵測
-            if (GetComponent<Collider>()) GetComponent<Collider>().enabled = false;
-            if (GetComponent<CharacterController>()) GetComponent<CharacterController>().enabled = false;
+        // 4. 關閉物理特性，防止被推擠或偵測
+        if (GetComponent<Collider>()) GetComponent<Collider>().enabled = false;
+        if (GetComponent<CharacterController>()) GetComponent<CharacterController>().enabled = false;
 
             Destroy(gameObject, 5f);
 
