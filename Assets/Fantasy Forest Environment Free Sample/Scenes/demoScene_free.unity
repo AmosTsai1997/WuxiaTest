@@ -11170,8 +11170,8 @@ MonoBehaviour:
   tutorialPanel: {fileID: 849496566}
   startButton: {fileID: 2089717041}
   playerPrefab: {fileID: 8836781148708987142, guid: 5d4685c4053dff84483c7e6b504d063c, type: 3}
-  villageSpawnPos: {x: 25, y: 5, z: 27}
-  largeMapSpawnPos: {x: 425, y: 25, z: 425}
+  villageSpawnPos: {x: 25, y: 7, z: 27}
+  largeMapSpawnPos: {x: 440, y: 25, z: 410}
   villageEnemyPrefab: {fileID: 4494808900826916607, guid: 468ec4c230d19494494cdb5b3882b028, type: 3}
   villageEnemyPos: {x: 20, y: 2, z: 30}
   villageRespawnTime: 60
@@ -14053,6 +14053,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
+    - {fileID: 0}
+    - {fileID: 0}
     - {fileID: 3853640626293820770, guid: 95365df95f8905248924f56a012e494d, type: 3}
     - {fileID: 3649406944790742694, guid: 95365df95f8905248924f56a012e494d, type: 3}
     - {fileID: 7522909248553161667, guid: 95365df95f8905248924f56a012e494d, type: 3}

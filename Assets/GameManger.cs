@@ -66,35 +66,35 @@ public class GameManager : MonoBehaviour
 
         // 2. 執行場景載入
         SceneManager.LoadScene(currentSceneName);
-
+    }
         // 3. 【核心修正】因為大俠是 DontDestroyOnLoad，所以他會帶著死掉的狀態過去
         // 我們要在這裡手動幫他復活
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            Health playerHealth = player.GetComponent<Health>();
-            if (playerHealth != null)
-            {
-                // 呼叫我們之前在 Health.cs 寫好的重置方法
-                playerHealth.ResetHealth();
+        // GameObject player = GameObject.FindGameObjectWithTag("Player");
+        // if (player != null)
+        // {
+        //     Health playerHealth = player.GetComponent<Health>();
+        //     if (playerHealth != null)
+        //     {
+        //         // 呼叫我們之前在 Health.cs 寫好的重置方法
+        //         playerHealth.ResetHealth();
                 
-                // 也要記得把大俠的控制權拿回來
-                player.GetComponent<HeroActions>().enabled = true;
+        //         // 也要記得把大俠的控制權拿回來
+        //         player.GetComponent<HeroActions>().enabled = true;
                 
-                // 如果有變紅，要把顏色改回來 (或是 ResetHealth 裡面處理)
-                var renderers = player.GetComponentsInChildren<Renderer>();
-                foreach (var r in renderers) r.material.color = Color.white;
-            }
+        //         // 如果有變紅，要把顏色改回來 (或是 ResetHealth 裡面處理)
+        //         var renderers = player.GetComponentsInChildren<Renderer>();
+        //         foreach (var r in renderers) r.material.color = Color.white;
+        //     }
             
-            // 確保大俠在重生後是在站立狀態，而不是倒地動畫的最後一幀
-            Animator anim = player.GetComponentInChildren<Animator>();
-            if (anim != null)
-            {
-                anim.Rebind(); // 重置 Animator 的所有狀態與參數
-                anim.Update(0f);
-            }
-        }
-    }
+        //     // 確保大俠在重生後是在站立狀態，而不是倒地動畫的最後一幀
+        //     Animator anim = player.GetComponentInChildren<Animator>();
+        //     if (anim != null)
+        //     {
+        //         anim.Rebind(); // 重置 Animator 的所有狀態與參數
+        //         anim.Update(0f);
+        //     }
+        // }
+    
     void Awake()
     {
         // 1. 遊戲一啟動就凍結時間
@@ -151,13 +151,11 @@ public class GameManager : MonoBehaviour
             SpawnQuestEnemies();
             // 啟動大地圖隨機生成計時器
             largeMapTimer = StartCoroutine(LargeMapSpawnRoutine());
-            Debug.Log($"場景 {scene.name} 載入完成！");
         }
         else
         {
             // 啟動初始地圖固定點生成計時器
             villageTimer = StartCoroutine(VillageSpawnRoutine());
-            Debug.Log($"場景 {scene.name} 載入完成！");
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -168,11 +166,12 @@ public class GameManager : MonoBehaviour
             {
                 h.ResetHealth();
                 // 建議：將玩家移回出生點，防止卡在死掉的位置
-                // player.transform.position = new Vector3(0, 1, 0); 
+                HandlePlayerSpawn(spawnPos);
+                // 恢復控制權
+                HeroActions ha = player.GetComponent<HeroActions>();
+                if (ha != null) ha.enabled = true;
             }
         }
-        // 1. 處理玩家生成與位置設定
-        HandlePlayerSpawn(spawnPos);
     }
     
     // --- 初始地圖：固定點重生 ---

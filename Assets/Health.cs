@@ -1,10 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI; 
+using System.Collections.Generic; // 必須引用以使用 List
 
 public class Health : MonoBehaviour
 {   
-    private Material originalMaterial;//    紀錄原始皮膚
-    private Renderer mainRenderer;
+    // 用來記錄所有 Renderer 及其原始材質的結構
+    private struct RendererMaterialMap
+    {
+        public Renderer renderer;
+        public Material originalMat;
+    }
+    private List<RendererMaterialMap> _materialRecords = new List<RendererMaterialMap>();
     public float maxHP ;
     public float currentHP{ get; private set; }
     [Header("UI 設定")]
@@ -25,13 +31,21 @@ public class Health : MonoBehaviour
         _anim = GetComponent<Animator>(); // 呼叫動畫，初始化！
         if (_anim == null) _anim = GetComponentInChildren<Animator>(); // 找子物件
         _collider = GetComponent<Collider>(); // 取得碰撞體以便死亡時關閉
+
+        // --- 核心修正：啟動時記錄所有子物件的原始材質 ---
+        _materialRecords.Clear();
+        Renderer[] allRenderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in allRenderers)
+        {
+            // 記錄 Renderer 及其 sharedMaterial (原始資源)
+            _materialRecords.Add(new RendererMaterialMap { 
+                renderer = r, 
+                originalMat = r.sharedMaterial 
+            });
+        }
         // 初始化 UI 設定
         InitUI();
         UpdateUI();
-        // 假設你的模型在子物件，抓第一個看到的 Renderer 即可
-        mainRenderer = GetComponentInChildren<Renderer>();
-        if (mainRenderer != null) originalMaterial = mainRenderer.material;
-    
     }
     void InitUI()
     {
@@ -84,7 +98,6 @@ public class Health : MonoBehaviour
         // 1. 變紅確認 (視覺偵錯)
         var renderers = GetComponentsInChildren<Renderer>();
         foreach (var r in renderers) r.material.color = Color.red;
-        if (mainRenderer != null) mainRenderer.material.color = Color.red;
         // 2. 徹底關閉其他行為（防止怪物死掉還在走路或攻擊）
         MonoBehaviour[] allScripts = GetComponents<MonoBehaviour>();
         foreach (var script in allScripts)
@@ -188,7 +201,6 @@ public class Health : MonoBehaviour
     
         // 1. 恢復顏色：還原成 Start 時記錄的顏色
         // 恢復原始材質，這比改顏色更安全
-        if (mainRenderer != null) mainRenderer.material = originalMaterial;
 
         // 2. 恢復 UI
         UpdateUI();
