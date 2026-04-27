@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
 
     [Header("玩家設定")]
     public GameObject playerPrefab;
-    public Vector3 villageSpawnPos = new Vector3(25f, 5f, 27f); // 抬高 Y 軸防止掉落
+    public Vector3 villageSpawnPos = new Vector3(25f, 7f, 27f); // 抬高 Y 軸防止掉落
     public Vector3 largeMapSpawnPos = new Vector3(440f, 25f, 410f);
 
     [Header("初始地圖重生設定")]
@@ -37,25 +37,63 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        // 只有當大俠死亡時，才偵測 R 鍵
-        if (playerHealth != null && playerHealth.isDead)
+        // 1. 動態尋找場景中的大俠
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        
+        if (player != null)
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            Health health = player.GetComponent<Health>();
+            
+            // 2. 如果大俠死透了，且按下 R
+            if (health != null && health.isDead)
             {
-                RestartGame();
+                // 畫面上可以印個提示，確認 GameManager 有在跑
+                // Debug.Log("偵測到大俠死亡，等待按下 R 重生..."); 
+
+                if (Input.GetKeyDown(KeyCode.R))
+                {
+                    Debug.Log("重生中...");
+                    RestartGame();
+                }
             }
         }
     }
 
     public void RestartGame()
     {
-        // 做法 A：簡單粗暴，直接重載目前場景 (推薦)
-        // 這樣所有死掉的怪物、掉落物都會重置，最乾淨
-        Scene activeScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(activeScene.name);
-        
-        // 如果你有用 DontDestroyOnLoad 保留大俠，則需要呼叫 playerHealth.ResetHealth()
-        // 但初學者建議直接重載場景最省事。
+        // 1. 取得目前場景名稱
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        // 2. 執行場景載入
+        SceneManager.LoadScene(currentSceneName);
+
+        // 3. 【核心修正】因為大俠是 DontDestroyOnLoad，所以他會帶著死掉的狀態過去
+        // 我們要在這裡手動幫他復活
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Health playerHealth = player.GetComponent<Health>();
+            if (playerHealth != null)
+            {
+                // 呼叫我們之前在 Health.cs 寫好的重置方法
+                playerHealth.ResetHealth();
+                
+                // 也要記得把大俠的控制權拿回來
+                player.GetComponent<HeroActions>().enabled = true;
+                
+                // 如果有變紅，要把顏色改回來 (或是 ResetHealth 裡面處理)
+                var renderers = player.GetComponentsInChildren<Renderer>();
+                foreach (var r in renderers) r.material.color = Color.white;
+            }
+            
+            // 確保大俠在重生後是在站立狀態，而不是倒地動畫的最後一幀
+            Animator anim = player.GetComponentInChildren<Animator>();
+            if (anim != null)
+            {
+                anim.Rebind(); // 重置 Animator 的所有狀態與參數
+                anim.Update(0f);
+            }
+        }
     }
     void Awake()
     {
@@ -113,11 +151,25 @@ public class GameManager : MonoBehaviour
             SpawnQuestEnemies();
             // 啟動大地圖隨機生成計時器
             largeMapTimer = StartCoroutine(LargeMapSpawnRoutine());
+            Debug.Log($"場景 {scene.name} 載入完成！");
         }
         else
         {
             // 啟動初始地圖固定點生成計時器
             villageTimer = StartCoroutine(VillageSpawnRoutine());
+            Debug.Log($"場景 {scene.name} 載入完成！");
+        }
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) 
+        {
+            Health h = player.GetComponent<Health>();
+            if (h != null && h.isDead) 
+            {
+                h.ResetHealth();
+                // 建議：將玩家移回出生點，防止卡在死掉的位置
+                // player.transform.position = new Vector3(0, 1, 0); 
+            }
         }
         // 1. 處理玩家生成與位置設定
         HandlePlayerSpawn(spawnPos);
@@ -172,11 +224,13 @@ public class GameManager : MonoBehaviour
             player = Instantiate(playerPrefab, pos, Quaternion.identity);
         }
         else if (player != null)
-        {
+        {   
+            SimpleGravity sg = player.GetComponent<SimpleGravity>();
             CharacterController cc = player.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false; 
             player.transform.position = pos;
             if (cc != null) cc.enabled = true;
+            sg.gravity = 9.81f;
         }
     }
 void SpawnQuestEnemies()
@@ -192,6 +246,4 @@ void SpawnQuestEnemies()
             if (pLevel != null && bLevel != null) bLevel.SetLevel(pLevel.currentLevel);
         }
     }
-
-    //角色重生
 }

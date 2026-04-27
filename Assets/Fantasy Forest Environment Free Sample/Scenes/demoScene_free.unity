@@ -14183,10 +14183,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: BOSS
       objectReference: {fileID: 0}
+    - target: {fileID: 208521626849470752, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2906390000811506531, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 1504810804}
+    - target: {fileID: 5210872592516232451, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8640990219312394707, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 8944437757792264714, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 27

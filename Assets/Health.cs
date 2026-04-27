@@ -2,7 +2,9 @@ using UnityEngine;
 using UnityEngine.UI; 
 
 public class Health : MonoBehaviour
-{
+{   
+    private Material originalMaterial;//    紀錄原始皮膚
+    private Renderer mainRenderer;
     public float maxHP ;
     public float currentHP{ get; private set; }
     [Header("UI 設定")]
@@ -26,6 +28,10 @@ public class Health : MonoBehaviour
         // 初始化 UI 設定
         InitUI();
         UpdateUI();
+        // 假設你的模型在子物件，抓第一個看到的 Renderer 即可
+        mainRenderer = GetComponentInChildren<Renderer>();
+        if (mainRenderer != null) originalMaterial = mainRenderer.material;
+    
     }
     void InitUI()
     {
@@ -78,7 +84,7 @@ public class Health : MonoBehaviour
         // 1. 變紅確認 (視覺偵錯)
         var renderers = GetComponentsInChildren<Renderer>();
         foreach (var r in renderers) r.material.color = Color.red;
-
+        if (mainRenderer != null) mainRenderer.material.color = Color.red;
         // 2. 徹底關閉其他行為（防止怪物死掉還在走路或攻擊）
         MonoBehaviour[] allScripts = GetComponents<MonoBehaviour>();
         foreach (var script in allScripts)
@@ -135,9 +141,13 @@ public class Health : MonoBehaviour
         
         if (GetComponent<SimpleGravity>()) 
             GetComponent<SimpleGravity>().verticalVelocity = 0;
+
+        // 禁用攻擊與移動，但「不要」SetActive(false)
+        GetComponent<HeroActions>().enabled = false;
             
         // 注意：大俠通常「不」執行 Destroy，也不執行 SetActive(false) 否則動畫播不出來
         // 如果你一定要大俠消失，請用延遲：Invoke("HidePlayer", 3f);
+        Debug.Log("請按下 R 鍵重新開始");
     }
 
     void HandleEnemyDeath()
@@ -154,15 +164,53 @@ public class Health : MonoBehaviour
         Destroy(this.gameObject, 5f);
         Debug.Log($"{gameObject.name} 將在 5 秒後消失");
     }
+    //  復活邏輯
     public void ResetHealth()
-    {
+    {           
         isDead = false;
-        currentHP = maxHP; // 因為是在 Health.cs 內部，所以可以修改 private set 的變數
-        
-        if (deathPanel != null)
+        currentHP = maxHP;
+
+        // 1. 先開啟 CharacterController (必須最先)
+        CharacterController cc = GetComponent<CharacterController>();
+        if (cc != null) 
         {
-            deathPanel.SetActive(false);
+            cc.enabled = true;
         }
+
+        // 2. 重置重力腳本
+        SimpleGravity gravity = GetComponent<SimpleGravity>();
+        if (gravity != null) 
+        {
+            gravity.enabled = true;
+            gravity.verticalVelocity = 0f; // 歸零，防止繼承死前的重力速度
+        }
+
+    
+        // 1. 恢復顏色：還原成 Start 時記錄的顏色
+        // 恢復原始材質，這比改顏色更安全
+        if (mainRenderer != null) mainRenderer.material = originalMaterial;
+
+        // 2. 恢復 UI
+        UpdateUI();
+
+        // 3. 恢復物理與腳本
+        if (GetComponent<Collider>()) GetComponent<Collider>().enabled = true;
+        if (GetComponent<CharacterController>()) GetComponent<CharacterController>().enabled = true;
+        
+        HeroActions actions = GetComponent<HeroActions>();
+        if (actions != null) actions.enabled = true;
+
+        // 4. 強力重置動畫
+        if (_anim == null) _anim = GetComponentInChildren<Animator>();
+        if (_anim != null) 
+        {
+            _anim.enabled = true;
+            _anim.Rebind();
+            _anim.Play("Idle", 0, 0f); // 強制跳回 Idle 狀態
+        }
+
+        if (deathPanel != null) deathPanel.SetActive(false);
+        Debug.Log("大俠已滿血復活！");
     }
     public void SetHealthFromLevel(float newMaxHP)
     {
