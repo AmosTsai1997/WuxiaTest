@@ -9,17 +9,19 @@ public class Health : MonoBehaviour
     public Slider hpSlider; // 在 Inspector 把人物的 Slider 拖進來
     public bool isPlayer = false; // 勾選此項代表是大俠
     public bool isDead = false;
-    private Animator _anim;
-    private Collider _collider;
+
     [Header("死亡設定")]
     public GameObject deathPanel; // 在 Inspector 拖入剛才做的 DeathPanel
-    [Header("獎勵設定")]
     public int expReward = 50;
+
+    private Animator _anim;
+    private Collider _collider;
 
     void Start()
     {
         currentHP = maxHP;
         _anim = GetComponent<Animator>(); // 呼叫動畫，初始化！
+        if (_anim == null) _anim = GetComponentInChildren<Animator>(); // 找子物件
         _collider = GetComponent<Collider>(); // 取得碰撞體以便死亡時關閉
         // 初始化 UI 設定
         InitUI();
@@ -77,15 +79,16 @@ public class Health : MonoBehaviour
         var renderers = GetComponentsInChildren<Renderer>();
         foreach (var r in renderers) r.material.color = Color.red;
 
-        // 2. 徹底斷開 AI 與 攻擊邏輯
-        // 我們要確保沒有人能在下一幀再去改 Animator 的參數
+        // 2. 徹底關閉其他行為（防止怪物死掉還在走路或攻擊）
         MonoBehaviour[] allScripts = GetComponents<MonoBehaviour>();
         foreach (var script in allScripts)
-        {
+        {   
+            // 不要關掉自己，否則 Destroy(gameObject, 5f) 可能會失效
             if (script != this) script.enabled = false;
         }
-
-        // 3. 處理 Animator：防止它被參數(如 Speed 或 Attack)拉回 Idle
+        // 3. 處理動畫
+        if (_anim == null) _anim = GetComponentInChildren<Animator>(); // 雙重檢查
+        
         if (_anim != null)
         {
             // 先把所有觸發器重設，防止積壓的訊號觸發轉場
@@ -105,43 +108,51 @@ public class Health : MonoBehaviour
             Debug.LogWarning($"<color=red>[Health 警告]</color> {gameObject.name} 倒下了，但是<color=yellow>找不到任何 Animator 組件</color>（包括子物件）！死亡動畫無法播放。");
         }
 
-        // 4. 關閉物理特性，防止被推擠或偵測
-        if (GetComponent<Collider>()) GetComponent<Collider>().enabled = false;
-        if (GetComponent<CharacterController>()) GetComponent<CharacterController>().enabled = false;
+        // 4. 關閉物理與碰撞（防止屍體擋路或重複受傷）
+        if (_collider != null) _collider.enabled = false;
+        CharacterController cc = GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
 
-            Destroy(gameObject, 5f);
+           
 
         
-        // 如果是大俠，關閉移動控制，避免死掉還能滑行
+        // 5.分類處理，如果是大俠，關閉移動控制，避免死掉還能滑行
         if (isPlayer)
         {   
-            // 顯示死亡介面
-            if (deathPanel != null) deathPanel.SetActive(true);
-            // 專業做法：死掉時解鎖滑鼠，否則玩家沒辦法點擊 UI (如果有按鈕的話)
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            GetComponent<HeroActions>().enabled = false;
-            // 重力也暫時歸零
-            if (GetComponent<SimpleGravity>()) 
-             {
-                GetComponent<SimpleGravity>().verticalVelocity = 0;
-             }            
-            gameObject.SetActive(false);
+            HandlePlayerDeath();
         }
-        // 如果這隻是怪物，且是被玩家打死的
-        if (!isPlayer)
+        else
         {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                LevelSystem ls = player.GetComponent<LevelSystem>();
-                if (ls != null)
-                {
-                    ls.AddXP(expReward); // 給玩家經驗值
-                }
-            }
-
+            HandleEnemyDeath();
         }
+    }
+
+    void HandlePlayerDeath()
+    {
+        if (deathPanel != null) deathPanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        
+        if (GetComponent<SimpleGravity>()) 
+            GetComponent<SimpleGravity>().verticalVelocity = 0;
+            
+        // 注意：大俠通常「不」執行 Destroy，也不執行 SetActive(false) 否則動畫播不出來
+        // 如果你一定要大俠消失，請用延遲：Invoke("HidePlayer", 3f);
+    }
+
+    void HandleEnemyDeath()
+    {
+        // 發放經驗值
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            LevelSystem ls = player.GetComponent<LevelSystem>();
+            if (ls != null) ls.AddXP(expReward);
+        }
+
+        // 這裡設定 5 秒後刪除怪物物件
+        Destroy(this.gameObject, 5f);
+        Debug.Log($"{gameObject.name} 將在 5 秒後消失");
     }
     public void ResetHealth()
     {

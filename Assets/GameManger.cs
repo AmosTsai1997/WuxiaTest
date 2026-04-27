@@ -4,7 +4,8 @@ using UnityEngine.SceneManagement;
 using System.Collections; // 必須引用這個才能使用協程
 
 public class GameManager : MonoBehaviour
-{
+{   
+    public Health playerHealth; // 在 Inspector 把大俠拖進來
     public GameObject tutorialPanel; // 拖入你的 TutorialPanel
     public Button startButton;      // 拖入你的 StartButton
     public static GameManager Instance;
@@ -32,7 +33,30 @@ public class GameManager : MonoBehaviour
     [Header("Boss生成設定")]
     public GameObject bossPrefab;
     public Vector3 bossSpawnPosition = new Vector3(432f, 30f, 432f);
+    
 
+    void Update()
+    {
+        // 只有當大俠死亡時，才偵測 R 鍵
+        if (playerHealth != null && playerHealth.isDead)
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                RestartGame();
+            }
+        }
+    }
+
+    public void RestartGame()
+    {
+        // 做法 A：簡單粗暴，直接重載目前場景 (推薦)
+        // 這樣所有死掉的怪物、掉落物都會重置，最乾淨
+        Scene activeScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(activeScene.name);
+        
+        // 如果你有用 DontDestroyOnLoad 保留大俠，則需要呼叫 playerHealth.ResetHealth()
+        // 但初學者建議直接重載場景最省事。
+    }
     void Awake()
     {
         // 1. 遊戲一啟動就凍結時間
@@ -98,7 +122,7 @@ public class GameManager : MonoBehaviour
         // 1. 處理玩家生成與位置設定
         HandlePlayerSpawn(spawnPos);
     }
-
+    
     // --- 初始地圖：固定點重生 ---
     IEnumerator VillageSpawnRoutine()
     {
@@ -168,4 +192,6 @@ void SpawnQuestEnemies()
             if (pLevel != null && bLevel != null) bLevel.SetLevel(pLevel.currentLevel);
         }
     }
+
+    //角色重生
 }
