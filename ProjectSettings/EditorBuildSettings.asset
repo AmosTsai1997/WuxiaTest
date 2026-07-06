@@ -5,14 +5,11 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/GetStarted_Scene.unity
-    guid: 6888813f2bd9e4521b9b1343abf0c60f
   - enabled: 1
     path: Assets/Scenes/demoScene_free.unity
     guid: 7769f33fb4fa2e5458344a36556ad760
   - enabled: 1
-    path: Assets/RPGPP_LT/Scene/LargeMap.unity
+    path: Assets/Art/Environments/RPGPP_LT/Scene/LargeMap.unity
     guid: d2809ab9b90eea7419d8d90d4c505d35
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
