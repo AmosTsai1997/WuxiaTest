@@ -14491,6 +14491,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6555128689765862822, guid: 5d4685c4053dff84483c7e6b504d063c, type: 3}
+      propertyPath: maxHP
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6555128689765862822, guid: 5d4685c4053dff84483c7e6b504d063c, type: 3}
       propertyPath: hpSlider
       value: 
       objectReference: {fileID: 1181210223}

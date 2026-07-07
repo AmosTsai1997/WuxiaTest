@@ -33,17 +33,37 @@ public class GameManager : MonoBehaviour
     [Header("Boss生成設定")]
     public GameObject bossPrefab;
     public Vector3 bossSpawnPosition = new Vector3(432f, 30f, 432f);
-    
+
+    void Awake()
+    {
+        // 單例查重必須放最前面
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return; // 我是複製品，到此為止，不准碰下面的東西
+        }
+        // 1. 遊戲一啟動就凍結時間
+        Time.timeScale = 0f;
+        // 2. 確保提示視窗是開啟的
+        if (tutorialPanel != null) tutorialPanel.SetActive(true);
+        // 3. 綁定按鈕點擊事件
+        if (startButton != null) startButton.onClick.AddListener(CloseTutorial);
+    }
 
     void Update()
     {
         // 1. 動態尋找場景中的大俠
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        
+
         if (player != null)
         {
             Health health = player.GetComponent<Health>();
-            
+
             // 2. 如果大俠死透了，且按下 R
             if (health != null && health.isDead)
             {
@@ -56,63 +76,6 @@ public class GameManager : MonoBehaviour
                     RestartGame();
                 }
             }
-        }
-    }
-
-    public void RestartGame()
-    {
-        // 1. 取得目前場景名稱
-        string currentSceneName = SceneManager.GetActiveScene().name;
-
-        // 2. 執行場景載入
-        SceneManager.LoadScene(currentSceneName);
-    }
-        // 3. 【核心修正】因為大俠是 DontDestroyOnLoad，所以他會帶著死掉的狀態過去
-        // 我們要在這裡手動幫他復活
-        // GameObject player = GameObject.FindGameObjectWithTag("Player");
-        // if (player != null)
-        // {
-        //     Health playerHealth = player.GetComponent<Health>();
-        //     if (playerHealth != null)
-        //     {
-        //         // 呼叫我們之前在 Health.cs 寫好的重置方法
-        //         playerHealth.ResetHealth();
-                
-        //         // 也要記得把大俠的控制權拿回來
-        //         player.GetComponent<HeroActions>().enabled = true;
-                
-        //         // 如果有變紅，要把顏色改回來 (或是 ResetHealth 裡面處理)
-        //         var renderers = player.GetComponentsInChildren<Renderer>();
-        //         foreach (var r in renderers) r.material.color = Color.white;
-        //     }
-            
-        //     // 確保大俠在重生後是在站立狀態，而不是倒地動畫的最後一幀
-        //     Animator anim = player.GetComponentInChildren<Animator>();
-        //     if (anim != null)
-        //     {
-        //         anim.Rebind(); // 重置 Animator 的所有狀態與參數
-        //         anim.Update(0f);
-        //     }
-        // }
-    
-    void Awake()
-    {
-        // 1. 遊戲一啟動就凍結時間
-        Time.timeScale = 0f;
-        // 2. 確保提示視窗是開啟的
-        if (tutorialPanel != null) tutorialPanel.SetActive(true);
-        // 3. 綁定按鈕點擊事件
-        if (startButton != null) startButton.onClick.AddListener(CloseTutorial);
-
-        // 確保切換場景時，這個 Manager 不會消失
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
         }
     }
 
@@ -241,7 +204,16 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-void SpawnQuestEnemies()
+
+    public void RestartGame()
+    {
+        // 1. 取得目前場景名稱
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        // 2. 執行場景載入
+        SceneManager.LoadScene(currentSceneName);
+    }
+    void SpawnQuestEnemies()
     {   
         if (bossPrefab == null) return;
         GameObject boss = Instantiate(bossPrefab, bossSpawnPosition, Quaternion.identity);

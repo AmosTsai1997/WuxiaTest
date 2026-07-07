@@ -32,9 +32,9 @@ public class Health : MonoBehaviour
         if (_anim == null) _anim = GetComponentInChildren<Animator>(); // 找子物件
         _collider = GetComponent<Collider>(); // 取得碰撞體以便死亡時關閉
 
-        // --- 核心修正：啟動時記錄所有子物件的原始材質 ---
+        // 啟動時記錄所有子物件的原始材質 (包含未啟用物件)
         _materialRecords.Clear();
-        Renderer[] allRenderers = GetComponentsInChildren<Renderer>();
+        Renderer[] allRenderers = GetComponentsInChildren<Renderer>(true);
         foreach (Renderer r in allRenderers)
         {
             // 記錄 Renderer 及其 sharedMaterial (原始資源)
@@ -118,13 +118,11 @@ public class Health : MonoBehaviour
 
             // 關鍵動作：直接播放 Die，並且「關閉轉場」
             _anim.SetTrigger("Die");
-            // --- Console 證據 1 ---
             Debug.Log($"<color=cyan>[Health]</color> {gameObject.name} 成功觸發 Die Animator Trigger。");
         }
         else
         {
-            // --- Console 證據 2：重大線索 ---
-            Debug.LogWarning($"<color=red>[Health 警告]</color> {gameObject.name} 倒下了，但是<color=yellow>找不到任何 Animator 組件</color>（包括子物件）！死亡動畫無法播放。");
+            Debug.LogWarning($"<color=red>[Health 警告]</color> {gameObject.name} 倒下了");
         }
 
         // 4. 關閉物理與碰撞（防止屍體擋路或重複受傷）
@@ -132,9 +130,6 @@ public class Health : MonoBehaviour
         CharacterController cc = GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
 
-           
-
-        
         // 5.分類處理，如果是大俠，關閉移動控制，避免死掉還能滑行
         if (isPlayer)
         {   
@@ -198,9 +193,16 @@ public class Health : MonoBehaviour
             gravity.verticalVelocity = 0f; // 歸零，防止繼承死前的重力速度
         }
 
-    
+
         // 1. 恢復顏色：還原成 Start 時記錄的顏色
-        // 恢復原始材質，這比改顏色更安全
+        foreach (RendererMaterialMap record in _materialRecords)
+        {
+            // 死亡動畫播放期間有些子物件可能被刪，先確認還活著
+            if (record.renderer != null)
+            {
+                record.renderer.material = record.originalMat;
+            }
+        }
 
         // 2. 恢復 UI
         UpdateUI();
