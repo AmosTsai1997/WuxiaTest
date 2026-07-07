@@ -7199,7 +7199,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "WASD \u79FB\u52D5\n\u6ED1\u9F20\u53F3\u9375\u79FB\u52D5\u93E1\u982D\n\u6ED1\u9F20\u5DE6\u9375\u653B\u64CA\nF\u9375\u8207NPC\u5C0D\u8A71\n\u6B66\u5668\u5207\u63DB1.\u5927\u528D2.\u5F13"
+  m_text: "WASD \u79FB\u52D5\n\u6ED1\u9F20\u53F3\u9375\u79FB\u52D5\u93E1\u982D\n\u6ED1\u9F20\u5DE6\u9375\u653B\u64CA\nF\u9375\u8207NPC\u5C0D\u8A71\n\u6B66\u5668\u5207\u63DBF1\u5927\u528D
+    F2\u5F13"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3e12c8b6806c0254e9e36b8f75c1fde7, type: 2}
   m_sharedMaterial: {fileID: 5241585168477276133, guid: 3e12c8b6806c0254e9e36b8f75c1fde7, type: 2}
@@ -12565,6 +12566,106 @@ Transform:
   m_Children: []
   m_Father: {fileID: 666769178}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1557910840
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1557910841}
+  - component: {fileID: 1557910844}
+  - component: {fileID: 1557910843}
+  - component: {fileID: 1557910842}
+  m_Layer: 5
+  m_Name: HotbarPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1557910841
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557910840}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1646100105}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 20}
+  m_SizeDelta: {x: 500, y: 120}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &1557910842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557910840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
+  m_Padding:
+    m_Left: 34
+    m_Right: 34
+    m_Top: 20
+    m_Bottom: 20
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 80, y: 80}
+  m_Spacing: {x: 8, y: 8}
+  m_Constraint: 1
+  m_ConstraintCount: 5
+--- !u!114 &1557910843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557910840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.7882353}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1557910844
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557910840}
+  m_CullTransparentMesh: 1
 --- !u!1 &1572341345
 GameObject:
   m_ObjectHideFlags: 0
@@ -13054,6 +13155,7 @@ GameObject:
   - component: {fileID: 1646100102}
   - component: {fileID: 1646100106}
   - component: {fileID: 1646100107}
+  - component: {fileID: 1646100108}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -13143,6 +13245,7 @@ RectTransform:
   - {fileID: 888951996}
   - {fileID: 849496567}
   - {fileID: 1461166488}
+  - {fileID: 1557910841}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -13177,6 +13280,23 @@ MonoBehaviour:
   inventoryPanel: {fileID: 1461166487}
   slotPrefab: {fileID: 1243624672098615461, guid: 7dabb9fc6863bd84a97f5f9c9b4f85d2, type: 3}
   slotCount: 50
+--- !u!114 &1646100108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646100101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45f1ef2f42048ff41adf0380cdd7c218, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HotbarUI
+  hotbarPanel: {fileID: 1557910840}
+  slotPrefab: {fileID: 1243624672098615461, guid: 16711106a4f4f2143b6d2948cb9a2827, type: 3}
+  slotCount: 5
+  normalColor: {r: 1, g: 1, b: 1, a: 0.4}
+  selectedColor: {r: 1, g: 0.9, b: 0.3, a: 0.8}
 --- !u!1 &1664048027
 GameObject:
   m_ObjectHideFlags: 0

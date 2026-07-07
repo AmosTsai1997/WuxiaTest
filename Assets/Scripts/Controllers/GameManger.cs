@@ -161,6 +161,9 @@ public class GameManager : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null) 
         {
+            HandlePlayerSpawn(spawnPos);
+
+            // 死亡重生
             Health h = player.GetComponent<Health>();
             if (h != null && h.isDead) 
             {
@@ -229,7 +232,13 @@ public class GameManager : MonoBehaviour
             if (cc != null) cc.enabled = false; 
             player.transform.position = pos;
             if (cc != null) cc.enabled = true;
-            sg.gravity = 9.81f;
+            if (sg != null) // 加上 null 檢查，身上沒掛 SimpleGravity 也不會報錯
+            {
+                sg.gravity = 9.81f;
+                sg.verticalVelocity = 0f; // 【新增】清掉累積的下墜速度。
+                // 沒這行的話，如果玩家是在「墜落中」被傳送，
+                // 會帶著超高速度瞬間砸穿新場景的地板
+            }
         }
     }
 void SpawnQuestEnemies()

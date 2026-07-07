@@ -15,18 +15,6 @@ public class TeleportPortal : MonoBehaviour
         {
             Debug.Log("玩家進入傳送門，準備切換場景...");
             SceneManager.LoadScene(targetSceneName);
-            //出現點
-            GameObject spawnPoint = GameObject.Find("SpawnPoint_Entrance");
-        if (spawnPoint != null)
-        {
-            // 先關閉 Character Controller，否則座標可能拉不動
-            CharacterController cc = GetComponent<CharacterController>();
-            if(cc != null) cc.enabled = false;
-
-            transform.position = spawnPoint.transform.position;
-
-            if(cc != null) cc.enabled = true;
-        }
         }
     }
 }

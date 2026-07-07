@@ -168,13 +168,13 @@ public class HeroActions : MonoBehaviour
         if (_levelSystem == null) return;
 
         // 按下 1：切換到劍 (需 LV 10)
-        if (Input.GetKeyDown(KeyCode.Alpha1) && _levelSystem.currentLevel >= 10)
+        if (Input.GetKeyDown(KeyCode.F1) && _levelSystem.currentLevel >= 10)
         {
             EquipWeapon("Sword");
         }
         
         // 按下 2：切換到弓 (需 LV 20)
-        if (Input.GetKeyDown(KeyCode.Alpha2) && _levelSystem.currentLevel >= 20)
+        if (Input.GetKeyDown(KeyCode.F2) && _levelSystem.currentLevel >= 20)
         {
             EquipWeapon("Bow");
         }
