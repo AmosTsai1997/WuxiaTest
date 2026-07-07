@@ -22,6 +22,8 @@ public class HeroActions : MonoBehaviour
     public GameObject swordModel; 
     public GameObject bowModel;   
     public string currentWeapon = "None";
+    public AudioClip swordSound;
+
     [Header("武器距離設定")]
     public float swordRange = 2.5f; // 劍的距離
     public float bowRange = 15f;    // 弓的距離
@@ -93,6 +95,7 @@ public class HeroActions : MonoBehaviour
             if (Time.time >= nextAttackTime)
             {
                 DoAttack();
+                AudioManager.Instance.PlaySE(swordSound);
             }
             else
             {
