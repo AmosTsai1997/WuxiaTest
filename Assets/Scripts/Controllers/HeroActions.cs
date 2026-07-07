@@ -270,10 +270,6 @@ public class HeroActions : MonoBehaviour
                         ApplyDamage(enemy, finalDamage);
                     }
                 }
-                else {
-                    // 如果沒打中，Debug 出來看看角度差多少
-                    Debug.Log($"角度不對：當前角度 {angle}，允許範圍 {attackAngle / 2f}");
-                }
             }
         }
     }

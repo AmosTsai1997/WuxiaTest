@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [Header("玩家設定")]
     public GameObject playerPrefab;
     public Vector3 villageSpawnPos = new Vector3(25f, 7f, 27f); // 抬高 Y 軸防止掉落
-    public Vector3 largeMapSpawnPos = new Vector3(440f, 25f, 410f);
+    public Vector3 largeMapSpawnPos = new Vector3(440f, 25f, 415f);
 
     [Header("初始地圖重生設定")]
     public GameObject villageEnemyPrefab;

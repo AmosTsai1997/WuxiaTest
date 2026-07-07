@@ -94,37 +94,43 @@ public class Health : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
-
+   
         // 1. 變紅確認 (視覺偵錯)
         var renderers = GetComponentsInChildren<Renderer>();
         foreach (var r in renderers) r.material.color = Color.red;
         // 2. 徹底關閉其他行為（防止怪物死掉還在走路或攻擊）
         MonoBehaviour[] allScripts = GetComponents<MonoBehaviour>();
         foreach (var script in allScripts)
-        {   
+        {
             // 不要關掉自己，否則 Destroy(gameObject, 5f) 可能會失效
-            if (script != this) script.enabled = false;
+            if (script != null && script != this) script.enabled = false;
         }
-        // 3. 處理動畫
-        if (_anim == null) _anim = GetComponentInChildren<Animator>(); // 雙重檢查
-        
-        if (_anim != null)
+        try
         {
-            // 先把所有觸發器重設，防止積壓的訊號觸發轉場
-            _anim.ResetTrigger("Attack");
-            _anim.ResetTrigger("Hurt");
-            // 如果你有用 Float 控制 Speed，強制歸零，防止轉回 Move/Idle
-            _anim.SetFloat("Speed", 0);
+            // 3. 處理動畫
+            if (_anim == null) _anim = GetComponentInChildren<Animator>(); // 雙重檢查
 
-            // 關鍵動作：直接播放 Die，並且「關閉轉場」
-            _anim.SetTrigger("Die");
-            Debug.Log($"<color=cyan>[Health]</color> {gameObject.name} 成功觸發 Die Animator Trigger。");
+            if (_anim != null)
+            {
+                // 先把所有觸發器重設，防止積壓的訊號觸發轉場
+                _anim.ResetTrigger("Attack");
+                _anim.ResetTrigger("Hurt");
+                // 如果你有用 Float 控制 Speed，強制歸零，防止轉回 Move/Idle
+                _anim.SetFloat("Speed", 0);
+
+                // 關鍵動作：直接播放 Die，並且「關閉轉場」
+                _anim.SetTrigger("Die");
+                Debug.Log($"<color=cyan>[Health]</color> {gameObject.name} 成功觸發 Die Animator Trigger。");
+            }
+            else
+            {
+                Debug.LogWarning($"<color=red>[Health 警告]</color> {gameObject.name} 倒下了");
+            }
         }
-        else
+        catch (System.Exception ex)
         {
-            Debug.LogWarning($"<color=red>[Health 警告]</color> {gameObject.name} 倒下了");
+            Debug.LogError($"<color=red>[Health 錯誤]</color> {gameObject.name} 在播放死亡動畫時發生錯誤: {ex.Message}");
         }
-
         // 4. 關閉物理與碰撞（防止屍體擋路或重複受傷）
         if (_collider != null) _collider.enabled = false;
         CharacterController cc = GetComponent<CharacterController>();
@@ -160,6 +166,11 @@ public class Health : MonoBehaviour
 
     void HandleEnemyDeath()
     {
+        // 通報任務系統：「有一隻叫這個名字的怪死了」
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.NotifyEnemyKilled(gameObject.name);
+        }
         // 發放經驗值
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)

@@ -33,6 +33,7 @@ public class LevelSystem : MonoBehaviour
         {
             LevelUp();
         }
+        UpdateUI();
     }
     void LevelUp()
     {
