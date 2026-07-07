@@ -45,18 +45,22 @@ public class NPCInteraction : MonoBehaviour
     {
         isTalking = !isTalking; // 切換狀態
         dialoguePanel.SetActive(isTalking);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        HeroActions ha = player.GetComponent<HeroActions>();
+
 
         if (isTalking)
         {
             dialogueText.text = $"【{npcName}】: {questInquiry}";
             if (actionButtons != null) actionButtons.SetActive(true);
-
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            if (ha != null) ha.enabled = false;
         }
         else
         {
             EndDialogue();
+            ha.enabled = true;
         }
     }
 
@@ -76,7 +80,6 @@ public class NPCInteraction : MonoBehaviour
         // 1. 找到 Player 並取得等級
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         int playerLevel = player.GetComponent<LevelSystem>().currentLevel;
-        
         dialogueText.text = $"【{npcName}】: 喔！看來少俠已達 {playerLevel} 等，村外的敵人也變強了，請小心！";
         if (actionButtons != null) actionButtons.SetActive(false);
 
