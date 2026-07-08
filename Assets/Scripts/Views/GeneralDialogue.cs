@@ -12,9 +12,10 @@ public class GeneralDialogue : MonoBehaviour
     [Header("NPC 基本設定")]
     public string npcName = "神祕人"; // 直接在 Inspector 改名字
     [TextArea(3, 5)] // 讓文字框再大一點好輸入
-    public string greetingText = "少俠，有何貴幹？";
+    public string greetingText = "有甚麼事嗎？";
 
     [Header("選項回覆設定")]
+    public GameObject OptionGroup; // 選項按鈕群組
     [TextArea(2, 4)] public string responseOption1 = "這裡是...我也說不清楚。";
     [TextArea(2, 4)] public string responseOption2 = "外面很危險，小心點。";
     [TextArea(2, 4)] public string responseOption3 = "保重，再見。";
@@ -55,6 +56,7 @@ public class GeneralDialogue : MonoBehaviour
 
         bool isActive = !dialoguePanel.activeSelf;
         dialoguePanel.SetActive(isActive);
+        OptionGroup.SetActive(isActive);
 
         if (isActive)
         {

@@ -1,41 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
 
-public  class InventoryUI : MonoBehaviour
+public class InventoryUI : MonoBehaviour
 {
     [Header("UI 引用")]
-    public GameObject inventoryPanel; // 背包面板
+    public GameObject inventoryPanel;
     public GameObject slotPrefab;
+    public TextMeshProUGUI goldText; // 金幣數字（可先留空）
 
     [Header("格子設定")]
-    public int slotCount = 50; // 格子數量
+    public int slotCount = 50;
+
+    private InventorySlotUI[] _slots; // 記住每一格，刷新時用
 
     void Start()
-    {   
-        // 生成50個格子
+    {
+        _slots = new InventorySlotUI[slotCount];
         for (int i = 0; i < slotCount; i++)
         {
             GameObject slot = Instantiate(slotPrefab, inventoryPanel.transform);
-
-            // 幫每個格子命名編號（例如 Slot_7），
-            // 之後做「把道具放進第幾格」的功能時會很好用
             slot.name = "Slot_" + i;
+            _slots[i] = slot.GetComponent<InventorySlotUI>();
+            _slots[i].Clear();
         }
+
+        // 訂閱背包廣播：內容一變，自動刷新畫面
+        InventorySystem.Instance.OnInventoryChanged += Refresh;
+        Refresh();
+
         inventoryPanel.SetActive(false);
+    }
+
+    void OnDestroy()
+    {
+        // 退訂，成對出現的鐵律
+        if (InventorySystem.Instance != null)
+            InventorySystem.Instance.OnInventoryChanged -= Refresh;
     }
 
     void Update()
     {
-        // 按 I 鍵開關道具欄（I = Inventory，慣例用法）
         if (Input.GetKeyDown(KeyCode.I))
-        {
-            // activeSelf 是「目前開著嗎」，取反(!)就達成切換效果：
-            // 開著 -> 關掉，關著 -> 打開
             inventoryPanel.SetActive(!inventoryPanel.activeSelf);
-        }
     }
 
+    void Refresh()
+    {
+        var items = InventorySystem.Instance.Items;
+        for (int i = 0; i < _slots.Length; i++)
+        {
+            if (i < items.Count) _slots[i].SetItem(items[i]);
+            else _slots[i].Clear();
+        }
+        if (goldText != null) goldText.text = "金幣：" + InventorySystem.Instance.gold;
+    }
 }
-

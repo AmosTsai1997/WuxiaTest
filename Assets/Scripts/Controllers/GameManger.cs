@@ -16,8 +16,8 @@ public class GameManager : MonoBehaviour
     public Vector3 largeMapSpawnPos = new Vector3(440f, 25f, 415f);
 
     [Header("初始地圖重生設定")]
-    public GameObject villageEnemyPrefab;
-    public Vector3 villageEnemyPos = new Vector3(20f, 2f, 30f);
+    public GameObject[] villageEnemyPrefab;
+    public Vector3 villageCenter = new Vector3(20f, 2f, 30f);
     public float villageRespawnTime = 60f;
 
     [Header("大地圖隨機生成設定")]
@@ -145,7 +145,24 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            if (villageEnemyPrefab != null) Instantiate(villageEnemyPrefab, villageEnemyPos, Quaternion.identity);
+            if (villageEnemyPrefab != null && villageEnemyPrefab.Length > 0)
+            {   
+                int randomIndex = Random.Range(0, villageEnemyPrefab.Length);
+                GameObject selectedEnemy = villageEnemyPrefab[randomIndex];
+
+                if(selectedEnemy != null) 
+                { 
+                    Vector2 randomCircle = Random.insideUnitCircle * 5f; // 5f 是隨機範圍半徑
+                    Vector3 randomSpawnPos = new Vector3(
+                        villageCenter.x + randomCircle.x,
+                        villageCenter.y,
+                        villageCenter.z + randomCircle.y
+                    );
+                    Instantiate(selectedEnemy, randomSpawnPos, Quaternion.identity);
+                    Debug.Log($"初始地圖生成了：{selectedEnemy.name} 於 {randomSpawnPos}");
+                }
+
+            }
             yield return new WaitForSeconds(villageRespawnTime);
         }
     }
@@ -204,7 +221,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     public void RestartGame()
     {
         // 1. 取得目前場景名稱

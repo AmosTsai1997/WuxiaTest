@@ -22,6 +22,10 @@ public class Health : MonoBehaviour
     public GameObject deathPanel; // 在 Inspector 拖入剛才做的 DeathPanel
     public int expReward = 50;
 
+    // 死亡事件（廣播電台）：其他腳本可以「訂閱」這個頻道，
+    // 本人死亡時所有訂閱者都會收到通知。
+    // Health 完全不需要知道訂閱者是誰、拿通知去做什麼
+    public event System.Action OnDeath;
     private Animator _anim;
     private Collider _collider;
 
@@ -61,6 +65,17 @@ public class Health : MonoBehaviour
             hpSlider.value = currentHP;
         }
     }
+
+    void UpdateUI()
+        {
+            if (hpSlider != null)
+            {
+                // 關鍵：這行能確保 Slider 的刻度與你當前的最大血量一致
+                hpSlider.maxValue = maxHP;
+                hpSlider.value = currentHP;
+            }
+        }
+
     // 這是受傷 API
     public void TakeDamage(float damage)
     {
@@ -78,23 +93,25 @@ public class Health : MonoBehaviour
         else
         {
             // 播放受傷動畫 (如果有設定 Hurt 參數)
-           if (_anim != null) _anim.SetTrigger("Hurt");
+            if (_anim != null) _anim.SetTrigger("Hurt");
         }
     }
-    void UpdateUI()
-        {
-            if (hpSlider != null)
-            {
-                // 關鍵：這行能確保 Slider 的刻度與你當前的最大血量一致
-                hpSlider.maxValue = maxHP;
-                hpSlider.value = currentHP;
-            }
-        }
+    // 回血 API：藥水、泉水、技能都可以呼叫這個
+    public void Heal(float amount)
+    {
+        if (isDead) return; // 死人喝藥沒用，要復活請走 ResetHealth
+
+        // Clamp：夾在 0 ~ maxHP 之間，避免補超過上限
+        currentHP = Mathf.Clamp(currentHP + amount, 0, maxHP);
+        UpdateUI(); // 老規矩：改完資料立刻刷畫面
+        Debug.Log($"{gameObject.name} 回復 {amount} 血量，目前 {currentHP}/{maxHP}");
+    }
     void Die()
     {
         if (isDead) return;
         isDead = true;
-   
+        OnDeath?.Invoke();
+
         // 1. 變紅確認 (視覺偵錯)
         var renderers = GetComponentsInChildren<Renderer>();
         foreach (var r in renderers) r.material.color = Color.red;

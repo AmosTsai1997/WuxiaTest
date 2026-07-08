@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2906390000811506531}
   - component: {fileID: 165331636269893904}
   - component: {fileID: 4067801686135770472}
+  - component: {fileID: 4827899661575605745}
   m_Layer: 0
   m_Name: BOSS
   m_TagString: Enemy
@@ -185,11 +186,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b45006f8da4ee0246ac170ac65f060d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSystem
-  _currentLevel: 1
-  currentXP: 0
+  _currentLevel: 5
+  currentXP: 200
   expSlider: {fileID: 0}
   levelText: {fileID: 0}
   attackMultiplier: 1
+--- !u!114 &4827899661575605745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208521626849470752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8267e00e3f7e9f9449bdfea00333e17e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootDropper
+  lootTable:
+  - prefab: {fileID: 6954758372675618198, guid: 6a301d09debaf1e4a8d3e2657cc44a96, type: 3}
+    chance: 0.839
+  - prefab: {fileID: 7215856734752065869, guid: 1242a88922ac6d34da67517f4c97626b, type: 3}
+    chance: 0.798
+  - prefab: {fileID: 8475833574052523601, guid: a1614f0cf649e3a4e894d20bda9008e7, type: 3}
+    chance: 0.234
 --- !u!1 &629667411311722984
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,6 +20,7 @@ public class NPCInteraction : MonoBehaviour
 
     private bool isPlayerNearby = false;
     private bool isTalking = false;
+    private bool questAccepted = false; // NPC 的記憶：任務是否已被接受
 
     void Start()
     {

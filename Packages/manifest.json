@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.atteneder.gltfast": "https://github.com/atteneder/glTFast.git",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.cinemachine": "3.1.6",
     "com.unity.feature.characters-animation": "1.0.0",
     "com.unity.feature.worldbuilding": "1.0.1",
