@@ -27,6 +27,9 @@ public class GameManager : MonoBehaviour
     public float spawnRadius = 50f; // 生成半徑，根據你的地圖大小調整
     public float largeMapRespawnTime = 60f;
 
+    [Header("副本生成位置")]
+    public Vector3 dungeonSpawnPos = new Vector3(-15f, 2f, 200f); // 副本備用出生點（找不到 SpawnPoint 物件時用）
+
     private Coroutine villageTimer;
     private Coroutine largeMapTimer;
     
@@ -99,26 +102,34 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // 每次載入場景後會自動執行此函式
+    // 每次載入場景後會自動執行此函式(怪物重生)
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {   
         // 停止所有正在運行的生成計時器，避免跨場景疊加
         StopAllCoroutines();
         // --- 決定初始場景的出生點 ---
-        Vector3 spawnPos = villageSpawnPos;
-        Debug.Log($"場景 {scene.name} 載入完成！");
+        // --- 依場景決定出生點與生怪邏輯 ---
+        Vector3 spawnPos;
 
-        if (scene.name == "LargeMap")
+        switch (scene.name) // 注意：字串比對區分大小寫，要跟場景檔名完全一致
         {
-            spawnPos = largeMapSpawnPos;
-            SpawnQuestEnemies();
-            // 啟動大地圖隨機生成計時器
-            largeMapTimer = StartCoroutine(LargeMapSpawnRoutine());
-        }
-        else
-        {
-            // 啟動初始地圖固定點生成計時器
-            villageTimer = StartCoroutine(VillageSpawnRoutine());
+            case "LargeMap":
+                spawnPos = largeMapSpawnPos;
+                SpawnQuestEnemies();
+                largeMapTimer = StartCoroutine(LargeMapSpawnRoutine());
+                break;
+
+            case "Dungeon":
+                // 優先找場景裡名叫 SpawnPoint 的物件，讓地圖「自己說」出生點在哪
+                GameObject sp = GameObject.Find("SpawnPoint");
+                spawnPos = (sp != null) ? sp.transform.position : dungeonSpawnPos;
+                // 副本不啟動野怪計時器 —— 魔王之後用專屬邏輯生成
+                break;
+
+            default: // 其他一律當村莊處理
+                spawnPos = villageSpawnPos;
+                villageTimer = StartCoroutine(VillageSpawnRoutine());
+                break;
         }
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");

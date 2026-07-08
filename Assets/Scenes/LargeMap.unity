@@ -28846,8 +28846,9 @@ GameObject:
   - component: {fileID: 1613873176}
   - component: {fileID: 1613873180}
   - component: {fileID: 1613873181}
+  - component: {fileID: 1613873182}
   m_Layer: 0
-  m_Name: NPC_furfur
+  m_Name: NPC_Furfur
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28956,7 +28957,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1613873175}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9177eea28463b824db4ec5ae7fdfdfbb, type: 3}
   m_Name: 
@@ -28987,6 +28988,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCQuestGiver
   npcName: "\u5973\u7235"
   questData: {fileID: 11400000, guid: 8682a55a3b308734eac0f61ccb85cb1d, type: 2}
+  dialoguePanel: {fileID: 380824799}
+  dialogueText: {fileID: 826157294}
+  actionButtons: {fileID: 1936067945}
+  acceptButton: {fileID: 1912859231}
+  declineButton: {fileID: 149798639}
+--- !u!114 &1613873182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1613873175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 704ef31ea6b0b044ca26ad1b09ad435b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDungeonInvite
+  npcName: Furfur
+  inviteText: "\u5730\u4E0B\u57CE\u6DF1\u8655\u51FA\u73FE\u4E86\u5F37\u5927\u7684\u9B54\u7269\uFF0C\u5192\u96AA\u8005\uFF0C\u80FD\u5354\u52A9\u6211\u5011\u8A0E\u4F10\u7260\u55CE\uFF1F"
+  dungeonSceneName: Dungeon
   dialoguePanel: {fileID: 380824799}
   dialogueText: {fileID: 826157294}
   actionButtons: {fileID: 1936067945}
@@ -36823,37 +36844,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!1 &1916076803
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1916076804}
-  m_Layer: 0
-  m_Name: InventorySystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1916076804
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1916076803}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 440.61313, y: 23.56194, z: 408.44446}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1917980804
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43780,4 +43770,3 @@ SceneRoots:
   - {fileID: 191067165}
   - {fileID: 42873527}
   - {fileID: 1044395453}
-  - {fileID: 1916076804}
