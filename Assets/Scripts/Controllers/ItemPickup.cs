@@ -7,11 +7,9 @@ public class ItemPickup : MonoBehaviour
     public int goldAmount = 0; // 金幣：填數量（此時 itemData 留空）
 
     [Header("展示效果")]
-    public float rotateSpeed = 90f;
     public float lifeTime = 30f;
 
     void Start() { Destroy(gameObject, lifeTime); }
-    void Update() { transform.Rotate(0, rotateSpeed * Time.deltaTime, 0); }
 
     void OnTriggerEnter(Collider other)
     {

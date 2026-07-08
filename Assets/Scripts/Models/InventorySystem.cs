@@ -64,4 +64,52 @@ public class InventorySystem : MonoBehaviour
         OnInventoryChanged?.Invoke();
         return true;
     }
+
+    // 查詢某種道具目前的庫存數量（快捷列顯示用）
+    public int GetItemCount(ItemData item)
+    {
+        foreach (ItemStack s in _items)
+        {
+            if (s.data == item) return s.count;
+        }
+        return 0; // 沒找到 = 0 個
+    }
+
+    public void UseItem(ItemData item)
+    {
+        // 1. 找庫存
+        if (item == null || !item.isUsable) return;
+        ItemStack stack = null;
+        foreach (ItemStack s in _items)
+        {
+            if (s.data == item) { stack = s; break; }
+        }
+        if (stack == null)
+        {
+            Debug.Log($"背包裡沒有 {item.itemName}！");
+            return;
+        }
+
+        // 2. 發動效果（目前只有回血；以後加魔力藥水就在這裡擴充）
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Health h = player.GetComponent<Health>();
+            if (h != null)
+            {
+                if (h.currentHP >= h.maxHP)
+                {
+                    Debug.Log("血量已滿，不浪費藥水");
+                    return; // 直接離開 —— 不扣庫存
+                }
+                h.Heal(item.healAmount);
+            }
+        }
+
+        // 3. 扣庫存，用完移除堆疊
+        stack.count--;
+        if (stack.count <= 0) _items.Remove(stack);
+
+        OnInventoryChanged?.Invoke(); // 廣播 → 背包和快捷列都會自動刷新
+    }
 }
