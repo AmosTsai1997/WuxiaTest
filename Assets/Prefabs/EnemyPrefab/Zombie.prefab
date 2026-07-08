@@ -457,12 +457,12 @@ GameObject:
   - component: {fileID: 6728853334028492626}
   - component: {fileID: 7081462145848448130}
   - component: {fileID: 1097711591722318897}
-  - component: {fileID: 1639427357829834888}
   - component: {fileID: 2060108363467180754}
   - component: {fileID: 145191668222559532}
   - component: {fileID: 654469977241929275}
   - component: {fileID: 2525347912296461384}
   - component: {fileID: 2899433749327920394}
+  - component: {fileID: 4200256845830023086}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Enemy
@@ -545,24 +545,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1639427357829834888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2568291916675110008}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10db1e71bbdbda148af91fd376b4cd57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  maxHealth: 100
-  currentHealth: 0
-  xpValue: 20
-  gravity: 9.81
-  hpFillImage: {fileID: 0}
-  meshRenderer: {fileID: 1097711591722318897}
 --- !u!143 &2060108363467180754
 CharacterController:
   m_ObjectHideFlags: 0
@@ -634,11 +616,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHP: 100
-  invincibilityDuration: 1.5
   hpSlider: {fileID: 0}
   isPlayer: 0
   isDead: 0
   deathPanel: {fileID: 0}
+  expReward: 50
 --- !u!136 &2899433749327920394
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -662,6 +644,27 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4200256845830023086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2568291916675110008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8267e00e3f7e9f9449bdfea00333e17e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootDropper
+  lootTable:
+  - prefab: {fileID: 7215856734752065869, guid: 1242a88922ac6d34da67517f4c97626b, type: 3}
+    chance: 0.313
+  - prefab: {fileID: 2253393103804301607, guid: e360d8d16d87ca544b56a603ea831f2f, type: 3}
+    chance: 0.104
+  - prefab: {fileID: 2752266846942812301, guid: 01fba43840893414a83863004e3a487b, type: 3}
+    chance: 0
+  - prefab: {fileID: 6954758372675618198, guid: 6a301d09debaf1e4a8d3e2657cc44a96, type: 3}
+    chance: 0.522
 --- !u!1 &2733068431537525571
 GameObject:
   m_ObjectHideFlags: 0
