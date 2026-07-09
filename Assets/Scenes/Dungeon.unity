@@ -13780,8 +13780,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 4907239047242697929, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -13794,6 +13793,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4907239047242697928, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1051189622}
+    - targetCorrespondingSourceObject: {fileID: 4907239047242697928, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1051189627}
+    - targetCorrespondingSourceObject: {fileID: 4907239047242697928, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1051189626}
+    - targetCorrespondingSourceObject: {fileID: 4907239047242697928, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1051189625}
   m_SourcePrefab: {fileID: 100100000, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
 --- !u!4 &1051189620 stripped
 Transform:
@@ -13855,6 +13863,67 @@ MonoBehaviour:
   attackRange: 3
   damage: 200
   attackCooldown: 8
+--- !u!114 &1051189625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1051189621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21d4a0f88af98d141b8e422f38a6840d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleGravity
+  verticalVelocity: 0
+  gravity: 9.81
+--- !u!143 &1051189626
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1051189621}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &1051189627
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1051189621}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 68c01903849046e42909a060d547c7ff, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1056027926
 GameObject:
   m_ObjectHideFlags: 0

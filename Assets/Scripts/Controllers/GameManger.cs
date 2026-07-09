@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public GameObject playerPrefab;
     public Vector3 villageSpawnPos = new Vector3(25f, 7f, 27f); // 抬高 Y 軸防止掉落
     public Vector3 largeMapSpawnPos = new Vector3(440f, 25f, 415f);
+    public Vector3 dungeonSpawnPos = new Vector3(-15f, 2f, 200f); // 副本備用出生點（找不到 SpawnPoint 物件時用）
 
     [Header("初始地圖重生設定")]
     public GameObject[] villageEnemyPrefab;
@@ -26,9 +27,6 @@ public class GameManager : MonoBehaviour
     public Vector3 largeMapCenter = new Vector3(444f, 22f, 410f);
     public float spawnRadius = 50f; // 生成半徑，根據你的地圖大小調整
     public float largeMapRespawnTime = 60f;
-
-    [Header("副本生成位置")]
-    public Vector3 dungeonSpawnPos = new Vector3(-15f, 2f, 200f); // 副本備用出生點（找不到 SpawnPoint 物件時用）
 
     private Coroutine villageTimer;
     private Coroutine largeMapTimer;
@@ -107,39 +105,37 @@ public class GameManager : MonoBehaviour
     {   
         // 停止所有正在運行的生成計時器，避免跨場景疊加
         StopAllCoroutines();
-        // --- 決定初始場景的出生點 ---
-        // --- 依場景決定出生點與生怪邏輯 ---
+
+        // --- 第一步：只決定出生點（不做任何生怪，確保這段不會被例外打斷）---
         Vector3 spawnPos;
 
         switch (scene.name) // 注意：字串比對區分大小寫，要跟場景檔名完全一致
         {
             case "LargeMap":
                 spawnPos = largeMapSpawnPos;
-                SpawnQuestEnemies();
-                largeMapTimer = StartCoroutine(LargeMapSpawnRoutine());
                 break;
 
             case "Dungeon":
                 // 優先找場景裡名叫 SpawnPoint 的物件，讓地圖「自己說」出生點在哪
                 GameObject sp = GameObject.Find("SpawnPoint");
                 spawnPos = (sp != null) ? sp.transform.position : dungeonSpawnPos;
-                // 副本不啟動野怪計時器 —— 魔王之後用專屬邏輯生成
                 break;
 
             default: // 其他一律當村莊處理
                 spawnPos = villageSpawnPos;
-                villageTimer = StartCoroutine(VillageSpawnRoutine());
                 break;
         }
 
+        // --- 第二步：玩家優先落地。搬玩家必須排在生怪之前，
+        // 生怪若出錯才不會害玩家帶著舊座標掉進虛空 ---
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null) 
+        if (player != null)
         {
             HandlePlayerSpawn(spawnPos);
 
             // 死亡重生
             Health h = player.GetComponent<Health>();
-            if (h != null && h.isDead) 
+            if (h != null && h.isDead)
             {
                 h.ResetHealth();
                 // 建議：將玩家移回出生點，防止卡在死掉的位置
@@ -148,6 +144,23 @@ public class GameManager : MonoBehaviour
                 HeroActions ha = player.GetComponent<HeroActions>();
                 if (ha != null) ha.enabled = true;
             }
+        }
+
+        // --- 第三步：玩家站穩了才開始各場景的生怪邏輯 ---
+        switch (scene.name)
+        {
+            case "LargeMap":
+                SpawnQuestEnemies();
+                largeMapTimer = StartCoroutine(LargeMapSpawnRoutine());
+                break;
+
+            case "Dungeon":
+                // 副本不啟動野怪計時器 —— 魔王之後用專屬邏輯生成
+                break;
+
+            default:
+                villageTimer = StartCoroutine(VillageSpawnRoutine());
+                break;
         }
     }
     
@@ -163,7 +176,7 @@ public class GameManager : MonoBehaviour
 
                 if(selectedEnemy != null) 
                 { 
-                    Vector2 randomCircle = Random.insideUnitCircle * 5f; // 5f 是隨機範圍半徑
+                    Vector2 randomCircle = Random.insideUnitCircle * 20f; // 5f 是隨機範圍半徑
                     Vector3 randomSpawnPos = new Vector3(
                         villageCenter.x + randomCircle.x,
                         villageCenter.y,

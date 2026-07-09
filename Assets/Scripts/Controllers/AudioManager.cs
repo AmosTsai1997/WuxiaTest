@@ -29,8 +29,19 @@ public class AudioManager:MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return; 
+            return;
         }
+
+        // 建立播放用的 AudioSource（merge 時曾遺失這段，導致 backGroundMusic 為 null，
+        // PlayBGM 在 sceneLoaded 事件中拋出 NullReferenceException，
+        // 連帶中斷後面 GameManager.OnSceneLoaded 的玩家出生點設定）
+        backGroundMusic = gameObject.AddComponent<AudioSource>();
+        backGroundMusic.loop = true;
+        backGroundMusic.playOnAwake = false;
+
+        soundEffect = gameObject.AddComponent<AudioSource>();
+        soundEffect.loop = false;
+        soundEffect.playOnAwake = false;
     }
 
 
