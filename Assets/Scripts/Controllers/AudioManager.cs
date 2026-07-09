@@ -12,9 +12,6 @@ public class AudioManager:MonoBehaviour
     public AudioClip largeMapBGM;  // 大地圖
     public AudioClip dungeonBGM;   // 地下城
 
-    [Header("背景音樂設定")]
-    public AudioClip startBGM;
-
     [Range(0f,1f)]
     public float bgmVolume = 0.5f;
 
@@ -24,37 +21,47 @@ public class AudioManager:MonoBehaviour
 
     void Awake()
     {
-        void OnEnable()
+        if (Instance == null)
         {
-            // 訂閱「場景載入完成」事件 —— 跟 GameManager 用的是同一個廣播源
-            SceneManager.sceneLoaded += OnSceneLoaded;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-
-        void OnDisable()
+        else
         {
-            SceneManager.sceneLoaded -= OnSceneLoaded; // 退訂，老規矩成對出現
+            Destroy(gameObject);
+            return; 
         }
-
-        void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            // 進什麼場景放什麼歌。遊戲一開始載入初始場景時也會觸發，
-            // 所以開場音樂不用另外寫
-            switch (scene.name)
-            {
-                case "Dungeon":
-                    PlayBGM(dungeonBGM);
-                    break;
-                case "LargeMap":
-                    PlayBGM(largeMapBGM);
-                    break;
-                default: // Forest 和其他場景
-                    PlayBGM(forestBGM);
-                    break;
-            }
-        }
-
     }
 
+
+    void OnEnable()
+    {
+        // 訂閱「場景載入完成」事件 —— 跟 GameManager 用的是同一個廣播源
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded; // 退訂，老規矩成對出現
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 進什麼場景放什麼歌。遊戲一開始載入初始場景時也會觸發，
+        // 所以開場音樂不用另外寫
+        switch (scene.name)
+        {
+            case "Dungeon":
+                PlayBGM(dungeonBGM);
+                break;
+            case "LargeMap":
+                PlayBGM(largeMapBGM);
+                break;
+            default: // Forest 和其他場景
+                PlayBGM(forestBGM);
+                break;
+        }
+    }
     public void PlayBGM(AudioClip clip)
     {
         if (clip == null) return;

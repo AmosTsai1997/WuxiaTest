@@ -8825,7 +8825,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40019106877c7184d87783e68345abab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  startBGM: {fileID: 8300000, guid: 2e82ca7b47ede46d486139d8d9c9059d, type: 3}
+  forestBGM: {fileID: 8300000, guid: 2e82ca7b47ede46d486139d8d9c9059d, type: 3}
+  largeMapBGM: {fileID: 8300000, guid: fd6b6d51cfcff4925a7954922d0891f8, type: 3}
+  dungeonBGM: {fileID: 8300000, guid: eacade5c242bd4e0db8d0ff9d7e8a6b6, type: 3}
+  startBGM: {fileID: 0}
   bgmVolume: 0.5
   seVolume: 1
 --- !u!1 &810188993
@@ -11536,6 +11539,7 @@ MonoBehaviour:
   largeMapCenter: {x: 444, y: 22, z: 410}
   spawnRadius: 50
   largeMapRespawnTime: 5
+  dungeonSpawnPos: {x: -15, y: 2, z: 200}
   bossPrefab: {fileID: 208521626849470752, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
   bossSpawnPosition: {x: 432, y: 30, z: 432}
 --- !u!4 &1337234788
