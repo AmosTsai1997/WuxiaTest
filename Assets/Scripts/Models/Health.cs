@@ -12,7 +12,7 @@ public class Health : MonoBehaviour
     }
     private List<RendererMaterialMap> _materialRecords = new List<RendererMaterialMap>();
     public float maxHP ;
-    public float currentHP{ get; private set; }
+    public float currentHP{ get;  set; }
     [Header("UI 設定")]
     public Slider hpSlider; // 在 Inspector 把人物的 Slider 拖進來
     public bool isPlayer = false; // 勾選此項代表是大俠

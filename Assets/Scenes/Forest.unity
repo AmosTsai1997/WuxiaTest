@@ -6417,6 +6417,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4827899661575605745, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
+      propertyPath: lootTable.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827899661575605745, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
+      propertyPath: lootTable.Array.data[3].chance
+      value: 0.234
+      objectReference: {fileID: 0}
+    - target: {fileID: 4827899661575605745, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
+      propertyPath: lootTable.Array.data[3].prefab
+      value: 
+      objectReference: {fileID: 634584603299474288, guid: 48853cd3cc24c284d8a5333395c20ba3, type: 3}
     - target: {fileID: 5210872592516232451, guid: b61afdc55f3c4484faa1ec701b7145e3, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

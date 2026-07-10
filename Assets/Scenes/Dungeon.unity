@@ -13742,15 +13742,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4907239047242697930, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.77
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4907239047242697930, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.83
+      value: -3.2
       objectReference: {fileID: 0}
     - target: {fileID: 4907239047242697930, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.33
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 4907239047242697930, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
       propertyPath: m_LocalRotation.w
@@ -13802,6 +13802,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4907239047242697928, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1051189625}
+    - targetCorrespondingSourceObject: {fileID: 4907239047242697928, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1051189628}
   m_SourcePrefab: {fileID: 100100000, guid: 82430f94fd1381c43878fce981a5aa43, type: 3}
 --- !u!4 &1051189620 stripped
 Transform:
@@ -13843,7 +13846,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8267e00e3f7e9f9449bdfea00333e17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LootDropper
-  lootTable: []
+  lootTable:
+  - prefab: {fileID: 8784535603738034532, guid: e5c1443d2315194448b2e377f622f871, type: 3}
+    chance: 0.368
+  - prefab: {fileID: 7215856734752065869, guid: 1242a88922ac6d34da67517f4c97626b, type: 3}
+    chance: 0.797
+  - prefab: {fileID: 2241973402649285381, guid: 61c7dcd8337158a468821e9b631f2689, type: 3}
+    chance: 0.286
+  - prefab: {fileID: 634584603299474288, guid: 48853cd3cc24c284d8a5333395c20ba3, type: 3}
+    chance: 0.808
 --- !u!114 &1051189624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13851,14 +13862,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1051189621}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 19052e388a0baf54593aef81e2c50139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   player: {fileID: 0}
   patrolSpeed: 1
-  chaseSpeed: 2
+  chaseSpeed: 3
   detectRange: 8
   attackRange: 3
   damage: 200
@@ -13901,7 +13912,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!95 &1051189627
 Animator:
   serializedVersion: 7
@@ -13924,6 +13935,26 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1051189628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1051189621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9afa18258ce0add469630129e57cd9f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossEnemyAI
+  player: {fileID: 0}
+  patrolSpeed: 2
+  chaseSpeed: 4
+  detectRange: 8
+  attackRange: 1.5
+  damage: 20
+  attackCooldown: 2
+  jumpSkillCooldown: 20
 --- !u!1 &1056027926
 GameObject:
   m_ObjectHideFlags: 0
@@ -14216,7 +14247,7 @@ Transform:
   m_GameObject: {fileID: 1066641078}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.841, y: 3.2, z: 208}
+  m_LocalPosition: {x: 0, y: 3.2, z: 208}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

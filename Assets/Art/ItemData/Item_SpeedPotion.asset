@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1d5732f4f732d447a6dcd5cd0472d2b, type: 3}
-  m_Name: Item_powerupPotion
+  m_Name: Item_SpeedPotion
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: "\u7D05\u85E5\u6C34"
-  icon: {fileID: 0}
-  description: 
-  isUsable: 0
+  itemName: "\u653B\u901F\u85E5\u6C34"
+  icon: {fileID: 21300000, guid: 138bb9089b9a4abcaababbcbf64d548a, type: 3}
+  description: "15\u79D2\u5167\u653B\u64CA\u901F\u5EA6\u63D0\u534730%"
+  isUsable: 1
   healAmount: 0

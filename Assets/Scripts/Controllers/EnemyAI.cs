@@ -1,8 +1,8 @@
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
-{   private Health healthScript; // 引用 Health 腳本   
-    private SimpleGravity gravity,verticalVelocity; // SimpleGravity 腳本 
+{   
+    private Health healthScript; // 引用 Health 腳本   
     public Transform player;          // 拖入大俠
     public float patrolSpeed = 2f;    // 巡邏速度
     public float chaseSpeed = 4f;     // 追擊速度
