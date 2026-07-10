@@ -90,9 +90,12 @@ public class InventorySystem : MonoBehaviour
             return;
         }
 
-        // 2. 發動效果（目前只有回血；以後加魔力藥水就在這裡擴充）
+        // 2. 發動效果（回血 / 攻速 Buff；以後加新藥水就在這裡擴充）
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        if (player == null) return;
+
+        // 2a. 回血類
+        if (item.healAmount > 0)
         {
             Health h = player.GetComponent<Health>();
             if (h != null)
@@ -103,6 +106,16 @@ public class InventorySystem : MonoBehaviour
                     return; // 直接離開 —— 不扣庫存
                 }
                 h.Heal(item.healAmount);
+            }
+        }
+
+        // 2b. 攻速 Buff 類（攻速藥水：attackSpeedBonus 0.3 = +30%）
+        if (item.attackSpeedBonus > 0)
+        {
+            HeroActions hero = player.GetComponent<HeroActions>();
+            if (hero != null)
+            {
+                hero.ApplyAttackSpeedBuff(item.attackSpeedBonus, item.buffDuration);
             }
         }
 

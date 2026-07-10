@@ -17,3 +17,5 @@ MonoBehaviour:
   description: "15\u79D2\u5167\u653B\u64CA\u901F\u5EA6\u63D0\u534730%"
   isUsable: 1
   healAmount: 0
+  attackSpeedBonus: 0.3
+  buffDuration: 15

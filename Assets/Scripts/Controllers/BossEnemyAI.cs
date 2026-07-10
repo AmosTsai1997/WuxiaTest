@@ -71,7 +71,9 @@ public class BossEnemyAI : MonoBehaviour
 
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
 
-        if (stateInfo.IsName("Creep|Bite_Action") && stateInfo.normalizedTime < 1.0f)
+        // 攻擊動畫（咬擊或揮拳）播放中就鎖定，不准移動
+        if ((stateInfo.IsName("Creep|Bite_Action") || stateInfo.IsName("Creep|Punch_Action"))
+            && stateInfo.normalizedTime < 1.0f)
         {
             _animator.SetFloat("Speed", 0);
             return;
@@ -108,13 +110,6 @@ public class BossEnemyAI : MonoBehaviour
             Patrol();
         }
     }
-    void Jump() 
-    {
-        _animator.SetFloat("Speed", 0);
-
-        // 1. 先播放攻擊動畫 (讓玩家看到前搖)
-        _animator.SetTrigger("Jump");
-    }
     void Patrol()
     {
         _patrolTimer += Time.deltaTime;
@@ -131,37 +126,19 @@ public class BossEnemyAI : MonoBehaviour
     void ChasePlayer()
     {
         MoveTowards(player.position, chaseSpeed);
-        _animator.SetFloat("Speed", 3f); // 假設 1 是跑步動畫
-    }
-    void PunchPlayer()
-    {
-        if (Time.time >= _nextAttackTime)
-        {
-            _animator.SetFloat("Speed", 0);
-
-            // 1. 先播放攻擊動畫 (讓玩家看到前搖)
-            _animator.SetTrigger("Punch");
-            // 2. 讓敵人面向玩家
-            Vector3 lookPos = player.position - transform.position;
-            lookPos.y = 0;
-            transform.rotation = Quaternion.LookRotation(lookPos);
-            // 3. 重點：不要直接扣血，改用延遲呼叫
-            // 假設動畫揮下去的時間大約是 0.5 秒，這 0.5 秒就是大俠的生存空檔
-            Invoke("ApplyDamageToPlayer", 0.5f);
-
-            // 4. 設定下次冷卻時間
-            _nextAttackTime = Time.time + attackCooldown;
-        }
+        _animator.SetFloat("Speed", 4f); // 假設 1 是跑步動畫
     }
     void AttackPlayer()
     {
         if (Time.time >= _nextAttackTime)
         {
             _animator.SetFloat("Speed", 0);
-            
-            // 1. 先播放攻擊動畫 (讓玩家看到前搖)
-            _animator.SetTrigger("Attack"); 
-            
+
+            // 1. 隨機出招：一半機率咬擊（Attack → Bite），一半機率揮拳（Punch）
+            //    兩個 Trigger 都走 AnyState 轉換，所以不管當下在哪個狀態都能出招
+            string move = (Random.value < 0.5f) ? "Attack" : "Punch";
+            _animator.SetTrigger(move);
+
             // 2. 讓敵人面向玩家
             Vector3 lookPos = player.position - transform.position;
             lookPos.y = 0;
@@ -169,7 +146,7 @@ public class BossEnemyAI : MonoBehaviour
 
             // 3. 重點：不要直接扣血，改用延遲呼叫
             // 假設動畫揮下去的時間大約是 0.5 秒，這 0.5 秒就是大俠的生存空檔
-            Invoke("ApplyDamageToPlayer", 0.5f); 
+            Invoke("ApplyDamageToPlayer", 0.5f);
 
             // 4. 設定下次冷卻時間
             _nextAttackTime = Time.time + attackCooldown;
@@ -183,7 +160,7 @@ public class BossEnemyAI : MonoBehaviour
         _animator.SetFloat("Speed", 0); // 速度歸零，防止滑步
 
         // 1. 播放 Jumpout 動畫
-        _animator.SetTrigger("Jumpout");
+        _animator.SetTrigger("JumpOut");
 
         // 【注意】這裡要等待 Jumpout 動畫播完（假設動畫長度是 1.2 秒，請依實際調整）
         yield return new WaitForSeconds(1.2f);
@@ -198,7 +175,7 @@ public class BossEnemyAI : MonoBehaviour
         }
 
         // 3. 播放 Jumpin 動畫
-        _animator.SetTrigger("Jumpin");
+        _animator.SetTrigger("JumpIn");
 
         // 【注意】等待 Jumpin 動畫落地的時間（假設是 1.5 秒，請依實際調整）
         yield return new WaitForSeconds(1.5f);

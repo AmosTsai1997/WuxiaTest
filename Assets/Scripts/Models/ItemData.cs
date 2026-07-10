@@ -13,4 +13,8 @@ public class ItemData : ScriptableObject
     [Header("使用效果（素材類保持預設就好）")]
     public bool isUsable = false;   // 藥水勾這個；木棒這種素材不勾
     public float healAmount = 0f;   // 使用時回多少血
+
+    [Header("增益效果（攻速藥水這類 Buff 藥水用）")]
+    public float attackSpeedBonus = 0f; // 0.3 = 攻速提升 30%
+    public float buffDuration = 0f;     // Buff 持續秒數
 }

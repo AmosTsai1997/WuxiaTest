@@ -44,6 +44,10 @@ public class HeroActions : MonoBehaviour
     private float nextWhirlwindTime = 0f;  // <--- 新增：紀錄下一次可以放技能的時間點
     private bool isWhirlwinding = false;
 
+    // --- 攻速 Buff 狀態（攻速藥水用）---
+    private float _attackSpeedMultiplier = 1f;   // 1 = 無加成；1.3 = 攻速 +30%
+    private Coroutine _attackSpeedRoutine;       // 記住進行中的 Buff，重複喝藥時要重算時間
+
     void Start()
     {
         _animator = GetComponent<Animator>();
@@ -230,9 +234,12 @@ public class HeroActions : MonoBehaviour
         } else {
             // 拳頭模式 (None)
             range = playerAttackRange; // 使用基礎範圍
-            cooldown = 0.5f; 
+            cooldown = 0.5f;
         }
-        
+
+        // 攻速 Buff：倍率 1.3 = 冷卻除以 1.3 = 出手快 30%
+        cooldown /= _attackSpeedMultiplier;
+
         nextAttackTime = Time.time + cooldown;
 
         float multiplier = (_levelSystem != null) ? _levelSystem.attackMultiplier : 1.0f;
@@ -432,5 +439,25 @@ public class HeroActions : MonoBehaviour
                 }
             }
         }
+    }
+
+    // --- 攻速藥水入口：bonus 0.3 = 攻速 +30%，duration 為持續秒數 ---
+    public void ApplyAttackSpeedBuff(float bonus, float duration)
+    {
+        // 重複喝藥：先停掉舊的倒數，改用新的（效果不疊加、時間重算）
+        if (_attackSpeedRoutine != null) StopCoroutine(_attackSpeedRoutine);
+        _attackSpeedRoutine = StartCoroutine(AttackSpeedRoutine(bonus, duration));
+    }
+
+    IEnumerator AttackSpeedRoutine(float bonus, float duration)
+    {
+        _attackSpeedMultiplier = 1f + bonus;
+        Debug.Log($"<color=orange>攻速提升 {bonus:P0}！持續 {duration} 秒</color>");
+
+        yield return new WaitForSeconds(duration);
+
+        _attackSpeedMultiplier = 1f;
+        _attackSpeedRoutine = null;
+        Debug.Log("攻速加成結束，恢復正常。");
     }
 }
