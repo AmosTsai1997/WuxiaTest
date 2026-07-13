@@ -16,8 +16,8 @@ GameObject:
   - component: {fileID: 2767168627090729730}
   - component: {fileID: 3274119966012499989}
   - component: {fileID: 535630056306629222}
-  - component: {fileID: 7522909248553161667}
   - component: {fileID: 3794971105077336572}
+  - component: {fileID: 3299208284205289935}
   m_Layer: 0
   m_Name: Goblin
   m_TagString: Enemy
@@ -197,25 +197,6 @@ MonoBehaviour:
   isDead: 0
   deathPanel: {fileID: 0}
   expReward: 50
---- !u!114 &7522909248553161667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 558800246607772246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8267e00e3f7e9f9449bdfea00333e17e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  lootTable:
-  - prefab: {fileID: 6954758372675618198, guid: 6a301d09debaf1e4a8d3e2657cc44a96, type: 3}
-    chance: 0.46
-  - prefab: {fileID: 7215856734752065869, guid: 1242a88922ac6d34da67517f4c97626b, type: 3}
-    chance: 0.323
-  - prefab: {fileID: 8475833574052523601, guid: a1614f0cf649e3a4e894d20bda9008e7, type: 3}
-    chance: 0.202
 --- !u!114 &3794971105077336572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,6 +214,25 @@ MonoBehaviour:
   expSlider: {fileID: 0}
   levelText: {fileID: 0}
   attackMultiplier: 1
+--- !u!114 &3299208284205289935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558800246607772246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8267e00e3f7e9f9449bdfea00333e17e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootDropper
+  lootTable:
+  - prefab: {fileID: 1953174209168874285, guid: 43e99ed1a744f2448a498dfc98182748, type: 3}
+    chance: 0.59
+  - prefab: {fileID: 5611903379225386334, guid: 7fe62dec008a56b4bb7d09536e4a49c8, type: 3}
+    chance: 0.17
+  - prefab: {fileID: 0}
+    chance: 0
 --- !u!1 &772248977201003791
 GameObject:
   m_ObjectHideFlags: 0

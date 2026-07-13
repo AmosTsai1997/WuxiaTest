@@ -126,7 +126,7 @@ public class InventorySystem : MonoBehaviour
         // 2b. 攻速 Buff 類（攻速藥水：attackSpeedBonus 0.3 = +30%）
         if (item.attackSpeedBonus > 0)
         {
-            HeroActions hero = player.GetComponent<HeroActions>();
+            PlayerActions hero = player.GetComponent<PlayerActions>();
             if (hero != null)
             {
                 hero.ApplyAttackSpeedBuff(item.attackSpeedBonus, item.buffDuration);

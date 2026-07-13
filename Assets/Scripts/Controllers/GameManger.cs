@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour
                 // 建議：將玩家移回出生點，防止卡在死掉的位置
                 HandlePlayerSpawn(spawnPos);
                 // 恢復控制權
-                HeroActions ha = player.GetComponent<HeroActions>();
+                PlayerActions ha = player.GetComponent<PlayerActions>();
                 if (ha != null) ha.enabled = true;
             }
         }

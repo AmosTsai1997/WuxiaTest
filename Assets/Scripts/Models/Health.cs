@@ -174,7 +174,7 @@ public class Health : MonoBehaviour
             GetComponent<SimpleGravity>().verticalVelocity = 0;
 
         // 禁用攻擊與移動，但「不要」SetActive(false)
-        GetComponent<HeroActions>().enabled = false;
+        GetComponent<PlayerActions>().enabled = false;
             
         // 注意：大俠通常「不」執行 Destroy，也不執行 SetActive(false) 否則動畫播不出來
         // 如果你一定要大俠消失，請用延遲：Invoke("HidePlayer", 3f);
@@ -239,7 +239,7 @@ public class Health : MonoBehaviour
         if (GetComponent<Collider>()) GetComponent<Collider>().enabled = true;
         if (GetComponent<CharacterController>()) GetComponent<CharacterController>().enabled = true;
         
-        HeroActions actions = GetComponent<HeroActions>();
+        PlayerActions actions = GetComponent<PlayerActions>();
         if (actions != null) actions.enabled = true;
 
         // 4. 強力重置動畫

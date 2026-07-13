@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79853efdd6b76da40a68f9b432edb89e, type: 3}
   m_Name: "Equipment_\u76AE\u88FD\u9774"
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentData
-  itemName: "\u7D05\u85E5\u6C34"
+  itemName: "\u76AE\u88FD\u9774"
   icon: {fileID: 0}
   description: 
   isUsable: 0
   healAmount: 0
   attackSpeedBonus: 0
   buffDuration: 0
-  slotType: 4
+  slotType: 3
   attackBonus: 0
-  defenseBonus: 0
+  defenseBonus: 10
+  attackAnimation: {fileID: 0}
+  attackCooldown: 1

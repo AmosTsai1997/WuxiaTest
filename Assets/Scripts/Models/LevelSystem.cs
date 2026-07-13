@@ -42,11 +42,11 @@ public class LevelSystem : MonoBehaviour
         
         UpdateStats(); // 更新血量與攻擊力
         
-        // 這裡可以呼叫 HeroActions 檢查武器解鎖
-        HeroActions hero = GetComponent<HeroActions>();
+        // 這裡可以呼叫 PlayerActions 檢查武器解鎖
+        PlayerActions hero = GetComponent<PlayerActions>();
         if (hero != null)
         {
-            // hero.CheckWeaponUnlock(currentLevel); // 假設你在 HeroActions 有寫這行
+            // hero.CheckWeaponUnlock(currentLevel); // 假設你在 PlayerActions 有寫這行
         }
 
         Debug.Log($"<color=yellow>恭喜升級！當前等級：{currentLevel}</color>");

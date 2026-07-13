@@ -47,7 +47,7 @@ public class NPCInteraction : MonoBehaviour
         isTalking = !isTalking; // 切換狀態
         dialoguePanel.SetActive(isTalking);
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        HeroActions ha = player.GetComponent<HeroActions>();
+        PlayerActions ha = player.GetComponent<PlayerActions>();
 
 
         if (isTalking)
