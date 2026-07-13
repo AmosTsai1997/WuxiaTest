@@ -64,7 +64,21 @@ public class InventorySystem : MonoBehaviour
         OnInventoryChanged?.Invoke();
         return true;
     }
-
+    // 從背包移除一個指定道具（裝備系統穿裝時用）
+    public bool RemoveItem(ItemData item)
+    {
+        foreach (ItemStack s in _items)
+        {
+            if (s.data == item)
+            {
+                s.count--;
+                if (s.count <= 0) _items.Remove(s); // 移除後立刻 return，
+                OnInventoryChanged?.Invoke();        // 不會繼續迭代所以安全
+                return true;
+            }
+        }
+        return false; // 背包裡沒這個東西
+    }
     // 查詢某種道具目前的庫存數量（快捷列顯示用）
     public int GetItemCount(ItemData item)
     {
