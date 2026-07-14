@@ -231,8 +231,8 @@ public class PlayerActions : MonoBehaviour
         if (weapon.modelPrefab != null && weaponSocket != null)
         {
             _weaponModelInstance = Instantiate(weapon.modelPrefab, weaponSocket);
-            _weaponModelInstance.transform.localPosition = Vector3.zero;   // 對齊插槽
-            _weaponModelInstance.transform.localRotation = Quaternion.identity;
+            _weaponModelInstance.transform.localPosition = weapon.gripPosition;    // 原本是 Vector3.zero
+            _weaponModelInstance.transform.localEulerAngles = weapon.gripRotation; // 原本是 identity
         }
     }
 

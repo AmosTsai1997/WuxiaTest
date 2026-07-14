@@ -22,6 +22,8 @@ MonoBehaviour:
   slotType: 4
   attackBonus: 50
   defenseBonus: 0
+  gripPosition: {x: 0.009, y: 0.111, z: 0}
+  gripRotation: {x: 354.8813, y: 272.68396, z: 179.76036}
   modelPrefab: {fileID: 2655126505098638281, guid: e7e969267a8d9d948a33973218fb3dc6, type: 3}
   attackAnimation: {fileID: 381366046490202241, guid: ee5e404da5ae61d4291af7340ab39b19, type: 3}
   attackCooldown: 1.7

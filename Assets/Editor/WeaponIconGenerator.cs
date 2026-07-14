@@ -82,7 +82,7 @@ public static class WeaponIconGenerator
             cam.nearClipPlane = 0.01f;
 
             float radius = ext.magnitude;                 // 包圍球半徑，滾轉後也不會裁到
-            cam.orthographicSize = radius * 1.05f;
+            cam.orthographicSize = radius * 1.35f;        // 1.05=貼邊太滿；1.35 約留 25% 邊距，跟藥水/金幣的視覺比例一致
             cam.farClipPlane = radius * 4f + 10f;
             camObj.transform.position = bounds.center - forward * (radius * 2f + 1f);
             camObj.transform.rotation =
