@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 580d7e954bbff174794836248c2cc077, type: 2}
     - target: {fileID: 919132149155446097, guid: 38b748d1e57621f469300f3e96dea280, type: 3}
       propertyPath: m_Name
-      value: SkullBones
+      value: SkullBones 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -93,7 +93,7 @@ MonoBehaviour:
   rotateZ: 0
   rotationSpeed: 85.67
   isFloating: 0
-  useEasingForFloating: 1
+  useEasingForFloating: 0
   floatHeight: 0.1
   floatSpeed: 0.4
   startScale: {x: 0.1, y: 0.1, z: 0.1}

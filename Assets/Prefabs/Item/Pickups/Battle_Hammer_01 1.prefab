@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6200012605210883814}
   - component: {fileID: -3637302730058780689}
   - component: {fileID: 8675544520657263277}
+  - component: {fileID: 9206216626744597554}
   m_Layer: 0
   m_Name: Battle_Hammer_01 1
   m_TagString: Untagged
@@ -101,6 +102,32 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: d6f7c30aad994514bba1a1f8916f1d59, type: 2}
   goldAmount: 0
   lifeTime: 30
+--- !u!114 &9206216626744597554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1953174209168874285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 845c415f3181b4840ab566c40e714752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRotating: 1
+  rotateX: 0
+  rotateY: 1
+  rotateZ: 0
+  rotationSpeed: 85.67
+  isFloating: 0
+  useEasingForFloating: 0
+  floatHeight: 1
+  floatSpeed: 0.4
+  startScale: {x: 0.1, y: 0.1, z: 0.1}
+  endScale: {x: 0.12, y: 0.12, z: 0.12}
+  isScaling: 1
+  useEasingForScaling: 1
+  scaleLerpSpeed: 1.11
 --- !u!1 &6498738067741260530
 GameObject:
   m_ObjectHideFlags: 0

@@ -192,6 +192,7 @@ GameObject:
   - component: {fileID: 7622668344111275522}
   - component: {fileID: 3179186645831519199}
   - component: {fileID: -3497513865994026480}
+  - component: {fileID: -8254282094098706028}
   m_Layer: 0
   m_Name: Longsword_02 1
   m_TagString: Untagged
@@ -281,6 +282,32 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 6f8118006e80c194387a37486a993ba8, type: 2}
   goldAmount: 0
   lifeTime: 30
+--- !u!114 &-8254282094098706028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2655126505098638281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 845c415f3181b4840ab566c40e714752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Benjathemaker.SimpleGemsAnim
+  isRotating: 1
+  rotateX: 0
+  rotateY: 0
+  rotateZ: 0
+  rotationSpeed: 90
+  isFloating: 0
+  useEasingForFloating: 0
+  floatHeight: 1
+  floatSpeed: 1
+  startScale: {x: 0.1, y: 0.1, z: 0.1}
+  endScale: {x: 0.12, y: 0.12, z: 0.12}
+  isScaling: 1
+  useEasingForScaling: 1
+  scaleLerpSpeed: 1
 --- !u!1 &8361261452812029565
 GameObject:
   m_ObjectHideFlags: 0
