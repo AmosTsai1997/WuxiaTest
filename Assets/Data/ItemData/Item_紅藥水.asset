@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: "\u7D05\u85E5\u6C34"
   icon: {fileID: 21300000, guid: b41af8e46b1e7db4f90db4e62b5772a2, type: 3}
-  description: "\u53EF\u4EE5\u88DC\u5145HP 50"
+  description: "\u53EF\u4EE5\u88DC\u5145HP 100"
   isUsable: 1
   healAmount: 100
   attackSpeedBonus: 0

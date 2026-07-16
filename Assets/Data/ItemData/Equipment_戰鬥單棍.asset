@@ -24,6 +24,9 @@ MonoBehaviour:
   defenseBonus: 0
   gripPosition: {x: 0.016, y: -0.548, z: -0.025}
   gripRotation: {x: -11.378, y: 82.934, z: 2.684}
-  modelPrefab: {fileID: 1953174209168874285, guid: 3f8771a44e530a44db1f538ce825d76e, type: 3}
+  weaponKind: 0
+  weaponPrefab: {fileID: 1953174209168874285, guid: 3f8771a44e530a44db1f538ce825d76e, type: 3}
   attackAnimation: {fileID: 2550410822785019017, guid: b38fcdbf88f95f2468be0a4ae7aae7f8, type: 3}
   attackCooldown: 0.6
+  attackRange: 1
+  armorPrefab: {fileID: 0}

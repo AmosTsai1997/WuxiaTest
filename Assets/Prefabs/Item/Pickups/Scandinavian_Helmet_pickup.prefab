@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &921329045179143679
+--- !u!1 &1396455491028916246
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1409998038482811228}
-  - component: {fileID: 2711558401103594733}
-  - component: {fileID: 1892060765201374842}
+  - component: {fileID: 5655637393193736280}
+  - component: {fileID: 4818421873648816073}
+  - component: {fileID: 161968632994271868}
   m_Layer: 0
-  m_Name: Arab_Swords_04_LOD1
+  m_Name: Scandinavian_Helmet_01_LOD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1409998038482811228
+--- !u!4 &5655637393193736280
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 921329045179143679}
+  m_GameObject: {fileID: 1396455491028916246}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5092072335670462436}
+  m_Father: {fileID: 3707550736800963143}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2711558401103594733
+--- !u!33 &4818421873648816073
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 921329045179143679}
-  m_Mesh: {fileID: -6793118914861379668, guid: 715f34ee66f901748af83caee0d06f34, type: 3}
---- !u!23 &1892060765201374842
+  m_GameObject: {fileID: 1396455491028916246}
+  m_Mesh: {fileID: 8582508983140871449, guid: f3f8ffca8251dec40af39b476e64e144, type: 3}
+--- !u!23 &161968632994271868
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 921329045179143679}
+  m_GameObject: {fileID: 1396455491028916246}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 2
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 529e0f78a9056424a97052189d54a572, type: 2}
+  - {fileID: 2100000, guid: 42ebd5bd9d84a684cb25edc03f2d9800, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -90,7 +90,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &5611903379225386334
+--- !u!1 &4051002626478833917
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -98,86 +98,112 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5092072335670462436}
-  - component: {fileID: 67751245782577301}
-  - component: {fileID: -1795013457508639839}
-  - component: {fileID: 1919103307442786801}
-  - component: {fileID: -319582101563931053}
+  - component: {fileID: 3707550736800963143}
+  - component: {fileID: 8442492733616876854}
+  - component: {fileID: 4977621608483862266}
+  - component: {fileID: -9059905533547748171}
+  - component: {fileID: -5227401955311877403}
   m_Layer: 0
-  m_Name: Arab_Swords_04 1
+  m_Name: Scandinavian_Helmet_pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5092072335670462436
+--- !u!4 &3707550736800963143
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5611903379225386334}
+  m_GameObject: {fileID: 4051002626478833917}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 702743626298953089}
-  - {fileID: 1409998038482811228}
-  - {fileID: 408105665964543835}
+  - {fileID: 4659779515608253412}
+  - {fileID: 7939928037416647566}
+  - {fileID: 5655637393193736280}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!205 &67751245782577301
+--- !u!205 &8442492733616876854
 LODGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5611903379225386334}
+  m_GameObject: {fileID: 4051002626478833917}
   serializedVersion: 3
-  m_LocalReferencePoint: {x: -0.00017300528, y: 0.010012858, z: -0.033385158}
-  m_Size: 0.6250297
+  m_LocalReferencePoint: {x: 0.0073453486, y: 0.09530548, z: 0.000007033348}
+  m_Size: 0.26003033
   m_FadeMode: 0
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.5401894
+  - screenRelativeHeight: 0.46528795
     fadeTransitionWidth: 0
     renderers:
-    - renderer: {fileID: 7165301794791762304}
-  - screenRelativeHeight: 0.20039496
+    - renderer: {fileID: 6022062692575265793}
+  - screenRelativeHeight: 0.13053004
     fadeTransitionWidth: 0
     renderers:
-    - renderer: {fileID: 1892060765201374842}
-  - screenRelativeHeight: 0.03850971
+    - renderer: {fileID: 4547877613679658365}
+  - screenRelativeHeight: 0.027371028
     fadeTransitionWidth: 0
     renderers:
-    - renderer: {fileID: 8323781688647212587}
+    - renderer: {fileID: 161968632994271868}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
---- !u!114 &-1795013457508639839
+--- !u!114 &4977621608483862266
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5611903379225386334}
+  m_GameObject: {fileID: 4051002626478833917}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f8288216ff16fb4cb474da2a4857ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
-  itemData: {fileID: 11400000, guid: dbfa4a50e58d3ed4aa62f3e76d013582, type: 2}
+  itemData: {fileID: 11400000, guid: 44a37e6e7e3b5234e8df32b5df484be6, type: 2}
   goldAmount: 0
   lifeTime: 30
---- !u!135 &1919103307442786801
+--- !u!114 &-9059905533547748171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4051002626478833917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 845c415f3181b4840ab566c40e714752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Benjathemaker.SimpleGemsAnim
+  isRotating: 1
+  rotateX: 0
+  rotateY: 1
+  rotateZ: 0
+  rotationSpeed: 90
+  isFloating: 0
+  useEasingForFloating: 0
+  floatHeight: 1
+  floatSpeed: 1
+  startScale: {x: 0.5, y: 0.5, z: 0.5}
+  endScale: {x: 0.6, y: 0.6, z: 0.6}
+  isScaling: 1
+  useEasingForScaling: 0
+  scaleLerpSpeed: 1
+--- !u!135 &-5227401955311877403
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5611903379225386334}
+  m_GameObject: {fileID: 4051002626478833917}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -192,33 +218,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-319582101563931053
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5611903379225386334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 845c415f3181b4840ab566c40e714752, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isRotating: 1
-  rotateX: 0
-  rotateY: 1
-  rotateZ: 0
-  rotationSpeed: 85.67
-  isFloating: 0
-  useEasingForFloating: 0
-  floatHeight: 1
-  floatSpeed: 0.4
-  startScale: {x: 0.1, y: 0.1, z: 0.1}
-  endScale: {x: 0.12, y: 0.12, z: 0.12}
-  isScaling: 1
-  useEasingForScaling: 1
-  scaleLerpSpeed: 1.11
---- !u!1 &5758361981730132543
+--- !u!1 &5153029552524956953
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -226,48 +226,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 408105665964543835}
-  - component: {fileID: 8367818965425990893}
-  - component: {fileID: 8323781688647212587}
+  - component: {fileID: 7939928037416647566}
+  - component: {fileID: 9081614572299060405}
+  - component: {fileID: 4547877613679658365}
   m_Layer: 0
-  m_Name: Arab_Swords_04_LOD2
+  m_Name: Scandinavian_Helmet_01_LOD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &408105665964543835
+--- !u!4 &7939928037416647566
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5758361981730132543}
+  m_GameObject: {fileID: 5153029552524956953}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5092072335670462436}
+  m_Father: {fileID: 3707550736800963143}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8367818965425990893
+--- !u!33 &9081614572299060405
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5758361981730132543}
-  m_Mesh: {fileID: 3461261382621218257, guid: 715f34ee66f901748af83caee0d06f34, type: 3}
---- !u!23 &8323781688647212587
+  m_GameObject: {fileID: 5153029552524956953}
+  m_Mesh: {fileID: 4208527704156241911, guid: f3f8ffca8251dec40af39b476e64e144, type: 3}
+--- !u!23 &4547877613679658365
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5758361981730132543}
+  m_GameObject: {fileID: 5153029552524956953}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 2
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -284,7 +284,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 529e0f78a9056424a97052189d54a572, type: 2}
+  - {fileID: 2100000, guid: 42ebd5bd9d84a684cb25edc03f2d9800, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -308,7 +308,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &9146142733066146104
+--- !u!1 &6315850694796450251
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -316,49 +316,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 702743626298953089}
-  - component: {fileID: 3492832816201368353}
-  - component: {fileID: 7165301794791762304}
-  - component: {fileID: 5590408912540948232}
+  - component: {fileID: 4659779515608253412}
+  - component: {fileID: 5105594009082399907}
+  - component: {fileID: 6022062692575265793}
+  - component: {fileID: 5715828334049758510}
   m_Layer: 0
-  m_Name: Arab_Swords_04_LOD0
+  m_Name: Scandinavian_Helmet_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &702743626298953089
+--- !u!4 &4659779515608253412
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9146142733066146104}
+  m_GameObject: {fileID: 6315850694796450251}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5092072335670462436}
+  m_Father: {fileID: 3707550736800963143}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3492832816201368353
+--- !u!33 &5105594009082399907
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9146142733066146104}
-  m_Mesh: {fileID: 796481429682043422, guid: 715f34ee66f901748af83caee0d06f34, type: 3}
---- !u!23 &7165301794791762304
+  m_GameObject: {fileID: 6315850694796450251}
+  m_Mesh: {fileID: -4287299057502272791, guid: f3f8ffca8251dec40af39b476e64e144, type: 3}
+--- !u!23 &6022062692575265793
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9146142733066146104}
+  m_GameObject: {fileID: 6315850694796450251}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 2
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -375,7 +375,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 529e0f78a9056424a97052189d54a572, type: 2}
+  - {fileID: 2100000, guid: 42ebd5bd9d84a684cb25edc03f2d9800, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -399,13 +399,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5590408912540948232
+--- !u!65 &5715828334049758510
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9146142733066146104}
+  m_GameObject: {fileID: 6315850694796450251}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -418,5 +418,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.021351472, y: 0.070362315, z: 0.62488055}
-  m_Center: {x: 0.00000009685755, y: 0.010012856, z: -0.03338504}
+  m_Size: {x: 0.25981808, y: 0.22011854, z: 0.20896274}
+  m_Center: {x: 0.0073883533, y: 0.09516173, z: -0.0000000037252903}

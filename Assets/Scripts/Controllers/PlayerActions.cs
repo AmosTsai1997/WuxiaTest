@@ -1,6 +1,6 @@
 using System.Collections;
-using UnityEditor.Timeline;
 using UnityEngine;
+
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerActions : MonoBehaviour
@@ -9,40 +9,33 @@ public class PlayerActions : MonoBehaviour
     private CharacterController _controller;
     private SimpleGravity _gravityScript;
     private LevelSystem _levelSystem; // 引用新的等級系統
+    private Health _health; // 快取起來，不要每幀 GetComponent
 
-    [Header("基礎攻擊力與範圍")]
-    public float playerDamage = 30f;    
-    public float playerAttackRange = 2f;
+    [Header("空手基礎值（有佩帶武器時全部改用武器資料）")]
+    public float playerDamage = 30f;      // 基礎傷害（武器加成疊在這上面）
+    public float playerAttackRange = 2f;  // 空手距離
+    public float fistCooldown = 0.5f;     // 空手攻擊間隔
 
     [Header("移動與跳躍")]
     public float speed = 5f;            
     public float jumpHeight = 2.0f; // 修正：0.1f 太低了，改回 2.0f 較合適     
     public float turnSpeed = 720f;      
 
-    [Header("武器系統")]
-    public GameObject swordModel; 
-    public GameObject bowModel;   
-    public string currentWeapon = "None";
-    public AudioClip swordSound;
     [Header("武器系統掛載")]
-    public Transform weaponSocket;           // 右手骨架下的空物件，Inspector 拖入
+    public Transform righthandSocket;           // 右手骨架下的空物件，Inspector 拖入
+    public Transform lefthandSocket; // 左手骨架下的空物件：弓專用（拉弓動畫是左手持弓、右手拉弦）
     private GameObject _weaponModelInstance; // 目前手上生成的武器模型
+    public AudioClip swordSound;
+    private EquipmentData _weapon;           // 目前佩帶的武器資料卡（null = 空手
 
     [Header("防具系統掛載")]
     public Transform HelmetSocket;           //  帽子
     private GameObject _HelmetModelInstance;
 
-    [Header("武器距離設定")]
-    public float swordRange = 2.5f; // 劍的距離
-    public float bowRange = 15f;    // 弓的距離
-    public float arrowWidth = 0.5f; // 讓箭矢的判定半徑變大 (像是一根粗水管)
+    [Header("攻擊判定")]
+    public float arrowWidth = 0.5f;          // 弓箭判定半徑（粗水管）
     [Range(0, 180)]
-    public float attackAngle = 60f; // 攻擊角度 (例如正前方 60 度內才算打到)
-
-    [Header("戰鬥節奏設定")]
-    public float nextAttackTime = 0.8f; // 下一次可以攻擊的時間
-    public float swordCooldown = 1f; // 劍的間隔 (秒)
-    public float bowCooldown = 1.2f;   // 弓的間隔 (秒)
+    public float attackAngle = 60f;          // 正面攻擊角度
 
    [Header("旋風斬設定")]
     public float whirlwindDuration = 2.0f; // 總執行秒數：1.5s
@@ -52,22 +45,25 @@ public class PlayerActions : MonoBehaviour
     private float nextWhirlwindTime = 0f;  // <--- 新增：紀錄下一次可以放技能的時間點
     private bool isWhirlwinding = false;
 
+    // 對外提供「目前手上武器模型」的位置，校準工具直接問這裡，不用自己猜在哪隻手
+    public Transform CurrentWeaponInstance =>
+        (_weaponModelInstance != null) ? _weaponModelInstance.transform : null;
+    private float nextAttackTime = 0f; // 下次可攻擊的時間點
     // --- 攻速 Buff 狀態（攻速藥水用）---
     private float _attackSpeedMultiplier = 1f;   // 1 = 無加成；1.3 = 攻速 +30%
     private Coroutine _attackSpeedRoutine;       // 記住進行中的 Buff，重複喝藥時要重算時間
     // --- 裝備系統接入 ---
-    private int _weaponAttackBonus = 0;              // 目前佩帶武器的攻擊加成
     private RuntimeAnimatorController _baseAnimator; // 原始控制器（脫裝時還原用）
-    private float _weaponCooldown = 1f;   // 目前佩帶武器的攻擊間隔
+
 
     void Start()
     {
         _animator = GetComponent<Animator>();
         _controller = GetComponent<CharacterController>();
         _gravityScript = GetComponent<SimpleGravity>();
-        _levelSystem = GetComponent<LevelSystem>(); // 初始化引用
-                                                    // 記住原本的動畫控制器，之後換武器動作要以它為底
-        _baseAnimator = _animator.runtimeAnimatorController;
+        _levelSystem = GetComponent<LevelSystem>(); 
+        _health = GetComponent<Health>();                          
+        _baseAnimator = _animator.runtimeAnimatorController; // 記住原本的動畫控制器，之後換武器動作要以它為底
 
         // 訂閱裝備廣播：穿脫任何裝備都會通知我們
         if (EquipmentSystem.Instance != null)
@@ -84,17 +80,8 @@ public class PlayerActions : MonoBehaviour
     }
     void Update()
     {   
-        Health health = GetComponent<Health>();
-        if (health != null && health.isDead)
-        {   
-            if (isWhirlwinding)
-            {
-                isWhirlwinding = false;
-                _animator.SetBool("isWhirlwinding", false);
-                StopAllCoroutines(); 
-            }
-            return;
-        }
+
+        if (_health != null && _health.isDead) return; // 死人不能操作
       
         //  處理跳躍
         if (Input.GetButtonDown("Jump") && _controller.isGrounded)
@@ -112,38 +99,17 @@ public class PlayerActions : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             // 檢查現在時間是否已經超過了「下次可攻擊時間」
-            if (Time.time >= nextAttackTime)
-            {
-                DoAttack();
-                AudioManager.Instance.PlaySE(swordSound);
-            }
-            else
-            {
-                Debug.Log("攻擊冷卻中...");
-            }
+            if (Time.time >= nextAttackTime) DoAttack();
+            else Debug.Log("攻擊冷卻中...");
         }
 
         // 6. 監測 Q 鍵啟動技能(旋風斬)
         if (Input.GetKeyDown(KeyCode.Q) && !isWhirlwinding)
         {
-            if (currentWeapon == "Sword")
-            {
-                // 檢查是否冷卻完畢
-                if (Time.time >= nextWhirlwindTime)
-                {
-                    StartCoroutine(WhirlwindRoutine());
-                }
-                else
-                {
-                    // 在 Console 顯示還剩幾秒，方便除錯
-                    float cdLeft = nextWhirlwindTime - Time.time;
-                    Debug.Log($"<color=orange>旋風斬冷卻中... 剩餘 {cdLeft:F1} 秒</color>");
-                }
-            }
-            else
-            {
-                Debug.Log("必須裝備【劍】才能使用旋風斬！");
-            }
+            bool hasMelee = (_weapon != null && _weapon.weaponKind == WeaponKind.Melee);
+            if (!hasMelee) { Debug.Log("必須佩帶【近戰武器】才能使用旋風斬！"); return; }
+            if (Time.time >= nextWhirlwindTime) StartCoroutine(WhirlwindRoutine());
+            else Debug.Log($"<color=orange>旋風斬冷卻中... 剩餘 {nextWhirlwindTime - Time.time:F1} 秒</color>");
         }
     }
     void HandleMovement()
@@ -166,193 +132,146 @@ public class PlayerActions : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
             // --- 修正：旋風斬期間不更新 Speed 參數 ---
-            if (!isWhirlwinding)
-            {
-                _animator.SetFloat("Speed", speed);
-            }
+            if (!isWhirlwinding)  _animator.SetFloat("Speed", speed);
         }
-        else
-        {
-            _animator.SetFloat("Speed", 0f);
-        }
-
-        if (_gravityScript != null)
-        {
-            finalVelocity.y = _gravityScript.verticalVelocity;
-        }
-
+        else _animator.SetFloat("Speed", 0f);
+        if (_gravityScript != null) finalVelocity.y = _gravityScript.verticalVelocity;
         _controller.Move(finalVelocity * Time.deltaTime);
     }
     public void RefreshWeapon()
     {
-        EquipmentData weapon = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Weapon);
+        _weapon = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Weapon);
 
         // 換裝第一步：不管新武器是什麼，先把手上舊的模型拆掉
         if (_weaponModelInstance != null) Destroy(_weaponModelInstance);
 
-        if (weapon == null)
+        if (_weapon == null)
         {
-            // === 空手狀態 ===
-            _weaponAttackBonus = 0;
-            currentWeapon = "None";
-            _animator.runtimeAnimatorController = _baseAnimator; // 還原預設動作
-            _animator.SetInteger("WeaponType", 0);               // 揮拳
-            if (swordModel != null) swordModel.SetActive(false);
+            // 空手
+            _animator.runtimeAnimatorController = _baseAnimator;
+            _animator.SetInteger("WeaponType", 0);
             return;
         }
 
-        // === 有佩帶武器 ===
-        _weaponAttackBonus = weapon.attackBonus;
-        _weaponCooldown = weapon.attackCooldown; // 讀取這把武器自己的攻速
-        currentWeapon = "Sword"; // 沿用既有近戰流程（旋風斬的檢查也會通過）
-
-        if (weapon.attackAnimation != null)
+        // 換攻擊動作（目前只換近戰那格；弓用內建 BowShot 動作）
+        if (_weapon.attackAnimation != null && _weapon.weaponKind == WeaponKind.Melee)
         {
-            // 點唱機換歌：複製一份原始控制器，只把近戰攻擊那格換成武器自己的動作。
-            // 中括號裡的字串 = 原本狀態機裡那段動畫「片段」的名字，一字不差
             AnimatorOverrideController aoc = new AnimatorOverrideController(_baseAnimator);
-            aoc["MeeleeAttack_TwoHanded"] = weapon.attackAnimation;
+            aoc["MeeleeAttack_TwoHanded"] = _weapon.attackAnimation;
             _animator.runtimeAnimatorController = aoc;
         }
         else
         {
-            _animator.runtimeAnimatorController = _baseAnimator; // 沒填動作就用預設
+            _animator.runtimeAnimatorController = _baseAnimator;
         }
 
-        // 注意：換控制器會把所有參數重置，所以 WeaponType 一定要在「換完之後」才設
-        _animator.SetInteger("WeaponType", 1);
-        // 生成武器模型，掛在手掌骨架的插槽底下（跟著手一起動）
-        if (weapon.weaponPrefab != null && weaponSocket != null)
+        // 依武器種類自動適配動畫層：1=近戰、2=弓（換控制器後才能設參數）
+        _animator.SetInteger("WeaponType", _weapon.weaponKind == WeaponKind.Bow ? 2 : 1);
+
+        // 依武器種類選掛載的手：弓掛左手，其他掛右手
+        Transform socket = (_weapon.weaponKind == WeaponKind.Bow && lefthandSocket != null)
+            ? lefthandSocket
+            : righthandSocket;
+        // 生成武器模型
+        if (_weapon.weaponPrefab != null && socket != null)
         {
-            _weaponModelInstance = Instantiate(weapon.weaponPrefab, weaponSocket);
-            _weaponModelInstance.transform.localPosition = weapon.gripPosition;    // 原本是 Vector3.zero
-            _weaponModelInstance.transform.localEulerAngles = weapon.gripRotation; // 原本是 identity
+            _weaponModelInstance = Instantiate(_weapon.weaponPrefab, socket);
+            _weaponModelInstance.transform.localPosition = _weapon.gripPosition;
+            _weaponModelInstance.transform.localEulerAngles = _weapon.gripRotation;
         }
     }
     void RefreshArmors()
     {
+        // TODO：防具外觀掛載（頭盔等），之後做
         EquipmentData Helmet = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Helmet);
         EquipmentData Body = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Body);
         EquipmentData Feet = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Feet);
         EquipmentData Hands = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Hands);
-
-
     }
 
-    void EquipWeapon(string weaponName)
-    {
-        // 1. 安全檢查：確保兩個模型都存在
-        if (swordModel == null || bowModel == null)
-        {
-            Debug.LogError("錯誤：劍或弓的模型欄位是空的，請確認 Hierarchy 物件已拖入！");
-            return;
-        }
-
-        // 2. 先把所有武器都關掉 (清空狀態)
-        swordModel.SetActive(false);
-        bowModel.SetActive(false);
-
-        // 3. 根據選擇開啟對應武器
-        if (weaponName == "Sword")
-        {
-            currentWeapon = "Sword";
-            swordModel.SetActive(true); // 只開劍
-            _animator.SetInteger("WeaponType", 1);
-            playerDamage = 50f;
-            playerAttackRange = swordRange;
-        }
-        else if (weaponName == "Bow")
-        {
-            currentWeapon = "Bow";
-            bowModel.SetActive(true); // 只開弓
-            _animator.SetInteger("WeaponType", 2);
-            playerDamage = 40f;
-            playerAttackRange = bowRange;
-        }
-
-        Debug.Log($"<color=green>武器切換成功：{weaponName}</color>");
-    }
     void DoAttack()
-    {   
-        _animator.SetTrigger("Attack");
+    {
 
-        // 1. 根據目前武器決定數值
-        float range;
-        float cooldown;
-        
-        if (currentWeapon == "Bow") {
-            range = bowRange;
-            cooldown = bowCooldown;
-        } else if (currentWeapon == "Sword") {
-            range = swordRange;
-            cooldown = _weaponCooldown; // 攻速由佩帶的武器決定，不再是寫死的常數
-        } else {
-            // 拳頭模式 (None)
-            range = playerAttackRange; // 使用基礎範圍
-            cooldown = 0.5f;
-        }
-
-        // 攻速 Buff：倍率 1.3 = 冷卻除以 1.3 = 出手快 30%
-        cooldown /= _attackSpeedMultiplier;
-
-        nextAttackTime = Time.time + cooldown;
+        // 數值一律問武器資料卡；空手用基礎值
+        float range = (_weapon != null) ? _weapon.attackRange : playerAttackRange;
+        float cooldown = (_weapon != null) ? _weapon.attackCooldown : fistCooldown;
+        cooldown /= _attackSpeedMultiplier; // 攻速 Buff
 
         float multiplier = (_levelSystem != null) ? _levelSystem.attackMultiplier : 1.0f;
-        // 基礎傷害 + 武器加成，再乘等級倍率
-        float finalDamage = (playerDamage + _weaponAttackBonus) * multiplier;
+        float bonus = (_weapon != null) ? _weapon.attackBonus : 0f;
+        float finalDamage = (playerDamage + bonus) * multiplier;
+        nextAttackTime = Time.time + cooldown;
+        if (_weapon != null && _weapon.weaponKind == WeaponKind.Bow)
+        {
+            // 弓：現在開始拉弓，冷卻結束的瞬間才放箭結算
+            StartCoroutine(BowShotRoutine(cooldown, finalDamage, range));
+        }
+        else
+        {
+            // 近戰／空手：點擊瞬間結算
+            _animator.SetTrigger("Attack");
+            AudioManager.Instance.PlaySE(swordSound);
+            MeleeHit(finalDamage, range);
+        }
+    }
 
-        // 2. 搜尋範圍內所有 Collider
+    // 近戰命中判定：扇形範圍內全部結算
+    void MeleeHit(float damage, float range)
+    {
         Collider[] hitEnemies = Physics.OverlapSphere(transform.position, range);
-        
         foreach (Collider enemy in hitEnemies)
         {
-            // 檢查標籤
-            if (enemy.CompareTag("Enemy"))
-            {
-                // 3. 指向性判定優化 (忽略高度差)
-                Vector3 dirToEnemy = (enemy.transform.position - transform.position);
-                dirToEnemy.y = 0; // 關鍵：強制抹平 Y 軸，只看平面方向
-                Vector3 myForward = transform.forward;
-                myForward.y = 0;
-
-                float angle = Vector3.Angle(myForward, dirToEnemy.normalized);
-
-                // 判斷角度
-                if (angle <= attackAngle / 2f)
-                {
-                    // 4. 執行傷害
-                    if (currentWeapon == "Bow")
-                    {
-                        if (HasLineOfSight(enemy.transform))
-                        {
-                            ApplyDamage(enemy, finalDamage);
-                        }
-                    }
-                    else
-                    {
-                        ApplyDamage(enemy, finalDamage);
-                    }
-                }
-            }
+            if (!enemy.CompareTag("Enemy")) continue;
+            if (!InAttackAngle(enemy.transform)) continue;
+            ApplyDamage(enemy, damage);
         }
+    }
+    // 弓：拉弓蓄力 → 時間到才放箭（傷害延遲結算，打斷條件：死亡）
+    IEnumerator BowShotRoutine(float drawTime, float damage, float range)
+    {
+        _animator.SetTrigger("Attack"); // WeaponType=2 時會走 BowShot 狀態
+        Debug.Log($"拉弓蓄力中...{drawTime:F1} 秒");
+
+        yield return new WaitForSeconds(drawTime);
+
+        // 蓄力期間死掉就不放箭（腳本被關閉「不會」自動停協程，要自己檢查）
+        if (_health != null && _health.isDead) yield break;
+
+        AudioManager.Instance.PlaySE(swordSound); // 放箭音效
+        bool hitSomething = false;
+
+        Collider[] hitEnemies = Physics.OverlapSphere(transform.position, range);
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (!enemy.CompareTag("Enemy")) continue;
+            if (!InAttackAngle(enemy.transform)) continue;
+            if (!HasLineOfSight(enemy.transform, range)) continue; // 弓需要視線
+            ApplyDamage(enemy, damage);
+            hitSomething = true;
+        }
+        if (!hitSomething) Debug.Log("箭射出去了，但沒有命中任何目標");
+    }
+
+    // 共用的正面角度判定（忽略高度差）
+    bool InAttackAngle(Transform target)
+    {
+        Vector3 dirToEnemy = target.position - transform.position;
+        dirToEnemy.y = 0;
+        Vector3 myForward = transform.forward;
+        myForward.y = 0;
+        return Vector3.Angle(myForward, dirToEnemy.normalized) <= attackAngle / 2f;
     }
 
     // 弓箭專用的視線檢查
-    bool HasLineOfSight(Transform target)
+    // 弓箭視線檢查
+    bool HasLineOfSight(Transform target, float range)
     {
-        RaycastHit hit;
         Vector3 startPos = transform.position + Vector3.up * 1f;
         Vector3 dir = (target.position + Vector3.up * 1f) - startPos;
 
-        // 將 Raycast 改為 SphereCast
-        // 參數：起點, 半徑, 方向, 結果, 距離
-        if (Physics.SphereCast(startPos, arrowWidth, dir.normalized, out hit, bowRange))
+        if (Physics.SphereCast(startPos, arrowWidth, dir.normalized, out RaycastHit hit, range))
         {
-            // 只要掃到的物件是目標或是標籤為 Enemy 就算中
-            if (hit.transform == target || hit.transform.CompareTag("Enemy"))
-            {
-                return true;
-            }
+            if (hit.transform == target || hit.transform.CompareTag("Enemy")) return true;
         }
         return false;
     }
@@ -360,7 +279,7 @@ public class PlayerActions : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-        float range = (currentWeapon == "Bow") ? bowRange : swordRange;
+        float range = (_weapon != null) ? _weapon.attackRange : playerAttackRange;
         
         // 畫出攻擊距離的圓圈
         Gizmos.DrawWireSphere(transform.position, range);
@@ -380,69 +299,12 @@ public class PlayerActions : MonoBehaviour
             eHealth.TakeDamage(damage);
             // 在畫面上畫一條綠線，代表打中了
             Debug.DrawLine(transform.position + Vector3.up, enemy.transform.position + Vector3.up, Color.green, 1.0f);
-            Debug.Log($"<color=cyan>成功擊中！</color> {enemy.name} 受到 {damage} 傷害");
         }
     }
 
-    // 配合 LevelSystem 的等級來解鎖武器
-    public void CheckWeaponUnlock(int currentLevel)
-    {
-        if (currentLevel >= 10 && currentWeapon == "None")
-        {
-            UnlockWeapon("Sword");
-        }
-        if (currentLevel >= 20 && currentWeapon != "Bow")
-        {
-            UnlockWeapon("Bow");
-        }
-    }
-
-    void UnlockWeapon(string type)
-    {
-        currentWeapon = type;
-        if (type == "Sword")
-        {
-            if (swordModel != null) swordModel.SetActive(true);
-            if (bowModel != null) bowModel.SetActive(false);
-            playerDamage = 50f;
-            Debug.Log("解鎖劍：基礎傷害提升至 50");
-        }
-        else if (type == "Bow")
-        {
-            if (swordModel != null) swordModel.SetActive(false);
-            if (bowModel != null) bowModel.SetActive(true);
-            playerAttackRange = 15f;
-            playerDamage = 40f;
-            Debug.Log("解鎖弓：攻擊距離大幅提升");
-        }
-    }
-    //  復活邏輯
-    void Respawn()
-    {
-        Health health = GetComponent<Health>();
-        if (health != null) 
-        {
-            health.ResetHealth(); // 重要：此方法內必須包含 isDead = false;
-        }
-        
-        if (health.deathPanel != null) health.deathPanel.SetActive(false);
-
-        // 瞬間傳送需先禁用 Controller
-        _controller.enabled = false;
-        transform.position = new Vector3(440, 5, 400); 
-        _controller.enabled = true;
-
-        // 重置動畫狀態機
-        _animator.Rebind();
-        _animator.Update(0f);
-        
-        Debug.Log("大俠已在座標 (0, 5, 0) 重生");
-    }
     // 旋風斬技能 Q
     IEnumerator WhirlwindRoutine()
     {   
-        if(  currentWeapon == "Sword")
-        {
             isWhirlwinding = true;
 
             // 進入 CD：設定下一次可以施放的時間 (目前時間 + CD 時間)
@@ -450,19 +312,20 @@ public class PlayerActions : MonoBehaviour
 
             // 【防卡死機制】：強制清除殘留的 Trigger，避免 Animator 錯亂
             _animator.ResetTrigger("Whirlwind");
-
             _animator.SetTrigger("Whirlwind");
             _animator.SetBool("isWhirlwinding", true);
 
+            float bonus = (_weapon != null) ? _weapon.attackBonus : 0f;
             float elapsed = 0f;
             // 每圈傷害 = 基礎傷害 * 間隔 (例如 50 * 0.5 = 25)
-            float damagePerRotation = (playerDamage + _weaponAttackBonus) * whirlwindInterval;
+            float damagePerRotation = (playerDamage + bonus) * whirlwindInterval;
 
-            Debug.Log($"啟動旋風斬！造成 {damagePerRotation} 傷害/次。");
             
             // 修正：條件改為總持續時間
             while (elapsed < whirlwindDuration)
             {
+                // 轉到一半死掉要立刻停：協程不會因腳本被關而停止，必須自己檢查
+                if (_health != null && _health.isDead) break;
                 ApplyCircleDamage(damagePerRotation);
                 // 修正：只保留一個等待，確保頻率正確
                 yield return new WaitForSeconds(whirlwindInterval);
@@ -470,9 +333,7 @@ public class PlayerActions : MonoBehaviour
             }
 
             _animator.SetBool("isWhirlwinding", false);
-            isWhirlwinding = false;
-            Debug.Log("旋風斬結束，進入冷卻狀態。");
-        }
+            isWhirlwinding = false;        
     }
     // 旋風斬傷害
     void ApplyCircleDamage(float damagePerRotation)
@@ -487,10 +348,7 @@ public class PlayerActions : MonoBehaviour
             {
                 // 取得怪物身上的 Health 腳本並扣血
                 var enemy = hitCollider.GetComponent<Health>(); 
-                if (enemy != null)
-                {
-                    enemy.TakeDamage(damagePerRotation);
-                }
+                if (enemy != null)  enemy.TakeDamage(damagePerRotation);
             }
         }
     }

@@ -15,20 +15,14 @@ public static class WeaponGripSaver
             return;
         }
 
-        // 找到玩家與武器插槽
-        PlayerActions hero = Object.FindAnyObjectByType<PlayerActions>();
-        if (hero == null || hero.weaponSocket == null)
+        // 防呆一律放在「第一次使用之前」，順序：玩家 → 裝備 → 模型
+        PlayerActions player = Object.FindAnyObjectByType<PlayerActions>();
+        if (player == null)
         {
-            Debug.LogError("找不到 PlayerActions 或 weaponSocket 未設定");
-            return;
-        }
-        if (hero.weaponSocket.childCount == 0)
-        {
-            Debug.LogError("插槽底下沒有武器模型 —— 請先穿上一把武器");
+            Debug.LogError("找不到 PlayerActions");
             return;
         }
 
-        // 目前裝備中的武器資產
         EquipmentData equip = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Weapon);
         if (equip == null)
         {
@@ -36,8 +30,14 @@ public static class WeaponGripSaver
             return;
         }
 
-        // 把武器實例目前的本地位置/旋轉抄進資產
-        Transform weaponInstance = hero.weaponSocket.GetChild(0);
+        // 不猜武器在哪隻手 —— 直接問 PlayerActions 拿目前的模型實例。
+        // 掛載邏輯只存在 RefreshWeapon 一份，以後加雙持這裡也不用改
+        Transform weaponInstance = player.CurrentWeaponInstance;
+        if (weaponInstance == null)
+        {
+            Debug.LogError("手上沒有武器模型 —— 請先穿上一把武器");
+            return;
+        }
         Undo.RecordObject(equip, "記錄握持校準");        // 支援 Ctrl+Z 反悔
         equip.gripPosition = weaponInstance.localPosition;
         equip.gripRotation = weaponInstance.localEulerAngles;
