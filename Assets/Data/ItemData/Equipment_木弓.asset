@@ -26,6 +26,7 @@ MonoBehaviour:
   gripRotation: {x: 9.862271, y: 1.7485486, z: 167.6917}
   weaponKind: 1
   weaponPrefab: {fileID: 1717406733745140, guid: d03c4353fda446d4f8df56d422578d64, type: 3}
+  projectilePrefab: {fileID: 5250051513830266529, guid: 8f6eef750cfd86e44a4dd58c1c9990aa, type: 3}
   attackAnimation: {fileID: -6230127162173890992, guid: c951eb6179d35744aabf7c3ebbd99251, type: 3}
   attackCooldown: 1.3
   attackRange: 15

@@ -238,18 +238,22 @@ public class PlayerActions : MonoBehaviour
         if (_health != null && _health.isDead) yield break;
 
         AudioManager.Instance.PlaySE(swordSound); // 放箭音效
-        bool hitSomething = false;
 
-        Collider[] hitEnemies = Physics.OverlapSphere(transform.position, range);
-        foreach (Collider enemy in hitEnemies)
+        if (_weapon != null && _weapon.projectilePrefab != null)
         {
-            if (!enemy.CompareTag("Enemy")) continue;
-            if (!InAttackAngle(enemy.transform)) continue;
-            if (!HasLineOfSight(enemy.transform, range)) continue; // 弓需要視線
-            ApplyDamage(enemy, damage);
-            hitSomething = true;
+            // 從胸口高度、身前一步生成（避免射線打到自己的 CharacterController）
+            Vector3 spawnPos = transform.position + Vector3.up * 1.2f + transform.forward * 0.8f;
+            GameObject arrowObj = Instantiate(_weapon.projectilePrefab, spawnPos, transform.rotation);
+            // 手上的武器純屬裝飾，把素材包自帶的碰撞體全部拆掉。
+            // 留著的話：弓橫在胸前就是一面牆，箭一出手先射中自己的弓
+            foreach (Collider c in _weaponModelInstance.GetComponentsInChildren<Collider>())
+            {
+                Destroy(c);
+            }
+
+            Arrow arrow = arrowObj.GetComponent<Arrow>();
+            if (arrow != null) arrow.Init(damage, range); // 傷害與射程來自弓的資料卡
         }
-        if (!hitSomething) Debug.Log("箭射出去了，但沒有命中任何目標");
     }
 
     // 共用的正面角度判定（忽略高度差）
@@ -262,35 +266,6 @@ public class PlayerActions : MonoBehaviour
         return Vector3.Angle(myForward, dirToEnemy.normalized) <= attackAngle / 2f;
     }
 
-    // 弓箭專用的視線檢查
-    // 弓箭視線檢查
-    bool HasLineOfSight(Transform target, float range)
-    {
-        Vector3 startPos = transform.position + Vector3.up * 1f;
-        Vector3 dir = (target.position + Vector3.up * 1f) - startPos;
-
-        if (Physics.SphereCast(startPos, arrowWidth, dir.normalized, out RaycastHit hit, range))
-        {
-            if (hit.transform == target || hit.transform.CompareTag("Enemy")) return true;
-        }
-        return false;
-    }
-    // 測試距離與角度是否合理 可以在Scene 視窗就能看到攻擊扇形。
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        float range = (_weapon != null) ? _weapon.attackRange : playerAttackRange;
-        
-        // 畫出攻擊距離的圓圈
-        Gizmos.DrawWireSphere(transform.position, range);
-        
-        // 畫出攻擊角度的兩條邊界線
-        Vector3 leftBoundary = Quaternion.Euler(0, -attackAngle / 2, 0) * transform.forward;
-        Vector3 rightBoundary = Quaternion.Euler(0, attackAngle / 2, 0) * transform.forward;
-        
-        Gizmos.DrawLine(transform.position, transform.position + leftBoundary * range);
-        Gizmos.DrawLine(transform.position, transform.position + rightBoundary * range);
-    }
     void ApplyDamage(Collider enemy, float damage)
     {
         Health eHealth = enemy.GetComponent<Health>();

@@ -24,6 +24,7 @@ public class EquipmentData : ItemData
     [Header("武器動畫設定")]
     public WeaponKind weaponKind = WeaponKind.Melee; // 弓種武器改選 Bow
     public GameObject weaponPrefab; // 佩帶時顯示在手上的模型（乾淨原版，不是 Pickup 變體）
+    public GameObject projectilePrefab; // 弓專用：發射的箭矢 Prefab
     public AnimationClip attackAnimation; // 這把武器自己的攻擊動作（留空 = 用預設動作）
     public float attackCooldown = 1f;     // 攻擊間隔（秒）：越小攻速越快
     public float attackRange = 2.5f;                 // 攻擊距離：近戰約 2.5、弓約 15
