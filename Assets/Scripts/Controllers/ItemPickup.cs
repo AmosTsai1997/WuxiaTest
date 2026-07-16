@@ -18,6 +18,7 @@ public class ItemPickup : MonoBehaviour
         if (goldAmount > 0)
         {
             InventorySystem.Instance.AddGold(goldAmount);
+            GameLog.Post($"撿到金幣 ×{goldAmount}");
         }
         else if (itemData != null)
         {

@@ -179,6 +179,7 @@ public class Health : MonoBehaviour
         // 注意：大俠通常「不」執行 Destroy，也不執行 SetActive(false) 否則動畫播不出來
         // 如果你一定要大俠消失，請用延遲：Invoke("HidePlayer", 3f);
         Debug.Log("請按下 R 鍵重新開始");
+        GameLog.Post("您已死亡，請按下 R 鍵重新開始");
     }
 
     void HandleEnemyDeath()
@@ -198,7 +199,6 @@ public class Health : MonoBehaviour
 
         // 這裡設定 5 秒後刪除怪物物件
         Destroy(this.gameObject, 5f);
-        Debug.Log($"{gameObject.name} 將在 5 秒後消失");
     }
     //  復活邏輯
     public void ResetHealth()

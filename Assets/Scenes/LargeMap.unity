@@ -42683,73 +42683,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 42873527}
     m_Modifications:
-    - target: {fileID: 654469977241929275, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: damage
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 654469977241929275, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: chaseSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 654469977241929275, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: attackRange
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 654469977241929275, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: patrolSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 654469977241929275, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: attackCooldown
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2060108363467180754, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: m_Height
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2060108363467180754, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: m_Center.y
-      value: 1.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2525347912296461384, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: maxHP
-      value: 300
-      objectReference: {fileID: 0}
     - target: {fileID: 2568291916675110008, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
       propertyPath: m_Name
       value: Zombie
-      objectReference: {fileID: 0}
-    - target: {fileID: 2899433749327920394, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: m_Height
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2899433749327920394, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: lootTable.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: lootTable.Array.data[2].chance
-      value: 0.522
-      objectReference: {fileID: 0}
-    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: lootTable.Array.data[2].prefab
-      value: 
-      objectReference: {fileID: 6954758372675618198, guid: 6a301d09debaf1e4a8d3e2657cc44a96, type: 3}
-    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: lootTable.Array.data[3].chance
-      value: 0.44
-      objectReference: {fileID: 0}
-    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: lootTable.Array.data[3].prefab
-      value: 
-      objectReference: {fileID: 634584603299474288, guid: 48853cd3cc24c284d8a5333395c20ba3, type: 3}
-    - target: {fileID: 6147083925847736911, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 6728853334028492626, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
       propertyPath: m_LocalPosition.x
@@ -42795,9 +42731,7 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2899433749327920394, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
-    - {fileID: 1639427357829834888, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -42902,42 +42836,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 42873527}
     m_Modifications:
-    - target: {fileID: 628640872672094523, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: m_Height
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 628640872672094523, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: m_Center.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2012042543848816665, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2106203400038606290, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: damage
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 2106203400038606290, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: chaseSpeed
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 2106203400038606290, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: attackRange
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2116540125626536421, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: m_Height
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2116540125626536421, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3973387240198428577, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: maxHP
-      value: 500
-      objectReference: {fileID: 0}
     - target: {fileID: 4002573942488430481, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
       propertyPath: m_Name
       value: Skeleton
@@ -42982,13 +42880,19 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8330306265100808475, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
+      propertyPath: lootTable.Array.data[3].prefab
+      value: 
+      objectReference: {fileID: 1717406733745140, guid: 7a995709164205e4ca2c22fb2aa23cbf, type: 3}
+    - target: {fileID: 8330306265100808475, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
+      propertyPath: lootTable.Array.data[4].prefab
+      value: 
+      objectReference: {fileID: 8738250328905181362, guid: 140285e7cfcbf9644bc11c5d8b5d4971, type: 3}
     - target: {fileID: 9025094460989975474, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2116540125626536421, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-    - {fileID: 211654140222081889, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

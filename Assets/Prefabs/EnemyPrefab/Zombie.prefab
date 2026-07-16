@@ -461,7 +461,6 @@ GameObject:
   - component: {fileID: 145191668222559532}
   - component: {fileID: 654469977241929275}
   - component: {fileID: 2525347912296461384}
-  - component: {fileID: 2899433749327920394}
   - component: {fileID: 4200256845830023086}
   m_Layer: 0
   m_Name: Zombie
@@ -563,13 +562,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1
+  m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!114 &145191668222559532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -597,12 +596,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
   player: {fileID: 0}
-  patrolSpeed: 2
-  chaseSpeed: 4
+  patrolSpeed: 1
+  chaseSpeed: 2
   detectRange: 8
-  attackRange: 1.5
-  damage: 20
-  attackCooldown: 2
+  attackRange: 2
+  damage: 30
+  attackCooldown: 2.5
 --- !u!114 &2525347912296461384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -615,35 +614,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d349f8c34da50694abb758e04b25c9cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHP: 100
+  maxHP: 300
   hpSlider: {fileID: 0}
   isPlayer: 0
   isDead: 0
   deathPanel: {fileID: 0}
   expReward: 50
---- !u!136 &2899433749327920394
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2568291916675110008}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4200256845830023086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -658,13 +634,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LootDropper
   lootTable:
   - prefab: {fileID: 7215856734752065869, guid: 1242a88922ac6d34da67517f4c97626b, type: 3}
-    chance: 0.313
+    chance: 0.72
   - prefab: {fileID: 2253393103804301607, guid: e360d8d16d87ca544b56a603ea831f2f, type: 3}
     chance: 0.104
-  - prefab: {fileID: 2752266846942812301, guid: 01fba43840893414a83863004e3a487b, type: 3}
-    chance: 0
   - prefab: {fileID: 6954758372675618198, guid: 6a301d09debaf1e4a8d3e2657cc44a96, type: 3}
     chance: 0.522
+  - prefab: {fileID: 5611903379225386334, guid: 7fe62dec008a56b4bb7d09536e4a49c8, type: 3}
+    chance: 0.44
+  - prefab: {fileID: 4051002626478833917, guid: af5336016911b1543ad3ea26b7bad3f4, type: 3}
+    chance: 0.3
 --- !u!1 &2733068431537525571
 GameObject:
   m_ObjectHideFlags: 0
@@ -1958,7 +1936,7 @@ Transform:
   m_GameObject: {fileID: 7139768484937723996}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

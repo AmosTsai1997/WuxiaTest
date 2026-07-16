@@ -13850,8 +13850,10 @@ MonoBehaviour:
     chance: 0.797
   - prefab: {fileID: 2241973402649285381, guid: 61c7dcd8337158a468821e9b631f2689, type: 3}
     chance: 0.286
-  - prefab: {fileID: 634584603299474288, guid: 48853cd3cc24c284d8a5333395c20ba3, type: 3}
+  - prefab: {fileID: 2655126505098638281, guid: d6e29208b042d9e4da728625f8bb9507, type: 3}
     chance: 0.808
+  - prefab: {fileID: 6954758372675618198, guid: 002c8e2e88a102d4e851926c864a9c0d, type: 3}
+    chance: 0.94
 --- !u!114 &1051189624
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class InventorySystem : MonoBehaviour
 {
@@ -62,6 +63,7 @@ public class InventorySystem : MonoBehaviour
 
         _items.Add(new ItemStack { data = item, count = 1 });
         OnInventoryChanged?.Invoke();
+        GameLog.Post($"撿到 {item.itemName}");
         return true;
     }
     // 從背包移除一個指定道具（裝備系統穿裝時用）

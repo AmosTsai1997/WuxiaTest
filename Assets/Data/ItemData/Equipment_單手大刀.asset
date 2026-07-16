@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79853efdd6b76da40a68f9b432edb89e, type: 3}
+  m_Name: "Equipment_\u55AE\u624B\u5927\u5200"
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentData
+  itemName: "\u55AE\u624B\u5927\u5200"
+  icon: {fileID: 21300000, guid: c8e0349166ac84b42b0007003c5797f9, type: 3}
+  description: 
+  isUsable: 0
+  healAmount: 0
+  attackSpeedBonus: 0
+  buffDuration: 0
+  slotType: 4
+  attackBonus: 30
+  defenseBonus: 0
+  gripPosition: {x: 0, y: 0, z: 0}
+  gripRotation: {x: 0, y: 0, z: 0}
+  modelPrefab: {fileID: 7919127829190139177, guid: f05fceac6fb9bb442bcba8cd2ac63df5, type: 3}
+  attackAnimation: {fileID: 2550410822785019017, guid: b38fcdbf88f95f2468be0a4ae7aae7f8, type: 3}
+  attackCooldown: 1

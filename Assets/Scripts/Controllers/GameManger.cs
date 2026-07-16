@@ -80,14 +80,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void CloseTutorial()
-    {
-        // 4. 恢復時間流逝
-        Time.timeScale = 1f;
-        // 5. 關閉視窗
-        tutorialPanel.SetActive(false); 
-        Debug.Log("遊戲正式開始！");
-    }
     private void OnEnable()
     {
         // 註冊場景載入事件
@@ -100,6 +92,16 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    void CloseTutorial()
+    {
+        // 4. 恢復時間流逝
+        Time.timeScale = 1f;
+        // 5. 關閉視窗
+        tutorialPanel.SetActive(false); 
+        Debug.Log("遊戲正式開始！");
+    }
+
+
     // 每次載入場景後會自動執行此函式(怪物重生)
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {   
@@ -107,24 +109,7 @@ public class GameManager : MonoBehaviour
         StopAllCoroutines();
 
         // --- 第一步：只決定出生點（不做任何生怪，確保這段不會被例外打斷）---
-        Vector3 spawnPos;
-
-        switch (scene.name) // 注意：字串比對區分大小寫，要跟場景檔名完全一致
-        {
-            case "LargeMap":
-                spawnPos = largeMapSpawnPos;
-                break;
-
-            case "Dungeon":
-                // 優先找場景裡名叫 SpawnPoint 的物件，讓地圖「自己說」出生點在哪
-                GameObject sp = GameObject.Find("SpawnPoint");
-                spawnPos = (sp != null) ? sp.transform.position : dungeonSpawnPos;
-                break;
-
-            default: // 其他一律當村莊處理
-                spawnPos = villageSpawnPos;
-                break;
-        }
+        Vector3 spawnPos = GetSpawnPos(scene.name);
 
         // --- 第二步：玩家優先落地。搬玩家必須排在生怪之前，
         // 生怪若出錯才不會害玩家帶著舊座標掉進虛空 ---
@@ -163,7 +148,58 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-    
+    // 依場景名稱決定出生點（場景載入與原地復活共用）
+    Vector3 GetSpawnPos(string sceneName)
+    {
+        switch (sceneName)
+        {
+            case "LargeMap":
+                return largeMapSpawnPos;
+
+            case "Dungeon":
+                // 優先找場景自述的 SpawnPoint，找不到才用備用座標
+                GameObject sp = GameObject.Find("SpawnPoint");
+                return (sp != null) ? sp.transform.position : dungeonSpawnPos;
+
+            default: // 其他一律當村莊
+                return villageSpawnPos;
+        }
+    }
+    void HandlePlayerSpawn(Vector3 pos)
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null && playerPrefab != null)
+        {
+            player = Instantiate(playerPrefab, pos, Quaternion.identity);
+        }
+        else if (player != null)
+        {
+            SimpleGravity sg = player.GetComponent<SimpleGravity>();
+            CharacterController cc = player.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+            player.transform.position = pos;
+            if (cc != null) cc.enabled = true;
+            if (sg != null) // 加上 null 檢查，身上沒掛 SimpleGravity 也不會報錯
+            {
+                sg.gravity = 9.81f;
+                sg.verticalVelocity = 0f; // 【新增】清掉累積的下墜速度。
+                // 沒這行的話，如果玩家是在「墜落中」被傳送，
+                // 會帶著超高速度瞬間砸穿新場景的地板
+            }
+        }
+    }
+
+    public void RestartGame()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
+
+        Health h = player.GetComponent<Health>();
+        if (h != null) h.ResetHealth(); // 血量、顏色、碰撞、動畫、關閉死亡面板全在這裡面
+
+        // 傳送回「目前所在場景」的出生點
+        HandlePlayerSpawn(GetSpawnPos(SceneManager.GetActiveScene().name));
+    }
     // --- 初始地圖：固定點重生 ---
     IEnumerator VillageSpawnRoutine()
     {
@@ -222,37 +258,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void HandlePlayerSpawn(Vector3 pos)
-    {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null && playerPrefab != null)
-        {
-            player = Instantiate(playerPrefab, pos, Quaternion.identity);
-        }
-        else if (player != null)
-        {   
-            SimpleGravity sg = player.GetComponent<SimpleGravity>();
-            CharacterController cc = player.GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false; 
-            player.transform.position = pos;
-            if (cc != null) cc.enabled = true;
-            if (sg != null) // 加上 null 檢查，身上沒掛 SimpleGravity 也不會報錯
-            {
-                sg.gravity = 9.81f;
-                sg.verticalVelocity = 0f; // 【新增】清掉累積的下墜速度。
-                // 沒這行的話，如果玩家是在「墜落中」被傳送，
-                // 會帶著超高速度瞬間砸穿新場景的地板
-            }
-        }
-    }
-    public void RestartGame()
-    {
-        // 1. 取得目前場景名稱
-        string currentSceneName = SceneManager.GetActiveScene().name;
 
-        // 2. 執行場景載入
-        SceneManager.LoadScene(currentSceneName);
-    }
+
     void SpawnQuestEnemies()
     {   
         if (bossPrefab == null) return;

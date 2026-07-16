@@ -296,7 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Benjathemaker.SimpleGemsAnim
   isRotating: 1
   rotateX: 0
-  rotateY: 0
+  rotateY: 1
   rotateZ: 0
   rotationSpeed: 90
   isFloating: 0

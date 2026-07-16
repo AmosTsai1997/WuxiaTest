@@ -89,17 +89,10 @@ public class PlayerActions : MonoBehaviour
                 _animator.SetBool("isWhirlwinding", false);
                 StopAllCoroutines(); 
             }
-
-            // 啟動重生：檢測 R 鍵
-            if (Input.GetKeyDown(KeyCode.R)) 
-            {
-                Debug.Log("收到重生指令：R");
-                Respawn();
-            }
             return;
         }
-        
-        // 1. 處理跳躍
+      
+        //  處理跳躍
         if (Input.GetButtonDown("Jump") && _controller.isGrounded)
         {
             if (_gravityScript != null)
@@ -108,13 +101,10 @@ public class PlayerActions : MonoBehaviour
                 _animator.SetTrigger("Jump");
             }
         }
-        // 2. 處理移動
+        //  處理移動
         HandleMovement();
 
-        // 4按鍵切換武器 (鍵盤 1 和 2)
-        HandleWeaponSwitch();
-
-        // 5. 攻擊邏輯
+        //  攻擊邏輯
         if (Input.GetMouseButtonDown(0))
         {
             // 檢查現在時間是否已經超過了「下次可攻擊時間」
@@ -233,23 +223,6 @@ public class PlayerActions : MonoBehaviour
             _weaponModelInstance = Instantiate(weapon.modelPrefab, weaponSocket);
             _weaponModelInstance.transform.localPosition = weapon.gripPosition;    // 原本是 Vector3.zero
             _weaponModelInstance.transform.localEulerAngles = weapon.gripRotation; // 原本是 identity
-        }
-    }
-
-    void HandleWeaponSwitch()
-    {
-        if (_levelSystem == null) return;
-
-        // 按下 F1：切換到劍 (需 LV 10)
-        if (Input.GetKeyDown(KeyCode.F1) && _levelSystem.currentLevel >= 10)
-        {
-            EquipWeapon("Sword");
-        }
-        
-        // 按下 F2：切換到弓 (需 LV 20)
-        if (Input.GetKeyDown(KeyCode.F2) && _levelSystem.currentLevel >= 20)
-        {
-            EquipWeapon("Bow");
         }
     }
 

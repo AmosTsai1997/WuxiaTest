@@ -36,6 +36,7 @@ public class NPCQuestGiver : MonoBehaviour
     {
         isTalking = !isTalking;
         dialoguePanel.SetActive(isTalking);
+        Time.timeScale = isTalking ? 0f : 1f; // 0 = 世界凍結，選單照常運作
         if (isTalking) RefreshDialogue();
     }
 

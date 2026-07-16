@@ -40,6 +40,7 @@ public class EquipmentSystem : MonoBehaviour
         _equipped[equip.slotType] = equip;
         OnEquipmentChanged?.Invoke();
         Debug.Log($"裝備了 {equip.itemName}（{equip.slotType}）");
+        GameLog.Post($"裝備了 {equip.itemName}");
     }
 
     // 脫裝備：放回背包
