@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f8288216ff16fb4cb474da2a4857ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
-  itemData: {fileID: 0}
+  itemData: {fileID: 11400000, guid: 1c262858ba2a61446bd540b6f787e3c0, type: 2}
   goldAmount: 0
   lifeTime: 30
 --- !u!135 &-5989796173696408226

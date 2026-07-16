@@ -42687,6 +42687,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie
       objectReference: {fileID: 0}
+    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
+      propertyPath: lootTable.Array.data[0].prefab
+      value: 
+      objectReference: {fileID: 7215856734752065869, guid: 560cde09110b3c84f8537ca2949379e1, type: 3}
+    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
+      propertyPath: lootTable.Array.data[2].prefab
+      value: 
+      objectReference: {fileID: 6954758372675618198, guid: 002c8e2e88a102d4e851926c864a9c0d, type: 3}
+    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
+      propertyPath: lootTable.Array.data[3].chance
+      value: 0.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 4200256845830023086, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
+      propertyPath: lootTable.Array.data[4].chance
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 6728853334028492626, guid: ed2dbb9074445424395bcb7adb25eb55, type: 3}
       propertyPath: m_LocalPosition.x
       value: 402
@@ -42880,14 +42896,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8330306265100808475, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: lootTable.Array.data[3].prefab
-      value: 
-      objectReference: {fileID: 1717406733745140, guid: 7a995709164205e4ca2c22fb2aa23cbf, type: 3}
-    - target: {fileID: 8330306265100808475, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
-      propertyPath: lootTable.Array.data[4].prefab
-      value: 
-      objectReference: {fileID: 8738250328905181362, guid: 140285e7cfcbf9644bc11c5d8b5d4971, type: 3}
     - target: {fileID: 9025094460989975474, guid: 40a351fe1bea4b946bde3b4c25ee8974, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

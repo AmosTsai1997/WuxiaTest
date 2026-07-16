@@ -23,7 +23,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8944437757792264714
 Transform:
   m_ObjectHideFlags: 0
@@ -122,7 +122,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &2540986460085205108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,6 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b45006f8da4ee0246ac170ac65f060d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSystem
+  growthData: {fileID: 0}
   _currentLevel: 5
   currentXP: 200
   expSlider: {fileID: 0}
@@ -213,7 +214,9 @@ MonoBehaviour:
   - prefab: {fileID: 7215856734752065869, guid: 560cde09110b3c84f8537ca2949379e1, type: 3}
     chance: 0.66
   - prefab: {fileID: 5611903379225386334, guid: 7fe62dec008a56b4bb7d09536e4a49c8, type: 3}
-    chance: 0.78
+    chance: 0.61
+  - prefab: {fileID: 7919127829190139177, guid: c1d85d46029d6f6469c7b83af3bd8973, type: 3}
+    chance: 0.61
 --- !u!1 &629667411311722984
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,7 +353,7 @@ RectTransform:
   m_Father: {fileID: 4396328870839857698}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

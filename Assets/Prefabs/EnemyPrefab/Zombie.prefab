@@ -635,7 +635,7 @@ MonoBehaviour:
   lootTable:
   - prefab: {fileID: 7215856734752065869, guid: 1242a88922ac6d34da67517f4c97626b, type: 3}
     chance: 0.72
-  - prefab: {fileID: 2253393103804301607, guid: e360d8d16d87ca544b56a603ea831f2f, type: 3}
+  - prefab: {fileID: 7215856734752065869, guid: 560cde09110b3c84f8537ca2949379e1, type: 3}
     chance: 0.104
   - prefab: {fileID: 6954758372675618198, guid: 6a301d09debaf1e4a8d3e2657cc44a96, type: 3}
     chance: 0.522

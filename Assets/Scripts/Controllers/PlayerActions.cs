@@ -28,6 +28,10 @@ public class PlayerActions : MonoBehaviour
     public Transform weaponSocket;           // 右手骨架下的空物件，Inspector 拖入
     private GameObject _weaponModelInstance; // 目前手上生成的武器模型
 
+    [Header("防具系統掛載")]
+    public Transform HelmetSocket;           //  帽子
+    private GameObject _HelmetModelInstance;
+
     [Header("武器距離設定")]
     public float swordRange = 2.5f; // 劍的距離
     public float bowRange = 15f;    // 弓的距離
@@ -179,7 +183,7 @@ public class PlayerActions : MonoBehaviour
 
         _controller.Move(finalVelocity * Time.deltaTime);
     }
-    void RefreshWeapon()
+    public void RefreshWeapon()
     {
         EquipmentData weapon = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Weapon);
 
@@ -218,12 +222,21 @@ public class PlayerActions : MonoBehaviour
         // 注意：換控制器會把所有參數重置，所以 WeaponType 一定要在「換完之後」才設
         _animator.SetInteger("WeaponType", 1);
         // 生成武器模型，掛在手掌骨架的插槽底下（跟著手一起動）
-        if (weapon.modelPrefab != null && weaponSocket != null)
+        if (weapon.weaponPrefab != null && weaponSocket != null)
         {
-            _weaponModelInstance = Instantiate(weapon.modelPrefab, weaponSocket);
+            _weaponModelInstance = Instantiate(weapon.weaponPrefab, weaponSocket);
             _weaponModelInstance.transform.localPosition = weapon.gripPosition;    // 原本是 Vector3.zero
             _weaponModelInstance.transform.localEulerAngles = weapon.gripRotation; // 原本是 identity
         }
+    }
+    void RefreshArmors()
+    {
+        EquipmentData Helmet = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Helmet);
+        EquipmentData Body = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Body);
+        EquipmentData Feet = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Feet);
+        EquipmentData Hands = EquipmentSystem.Instance.GetEquipped(EquipSlotType.Hands);
+
+
     }
 
     void EquipWeapon(string weaponName)

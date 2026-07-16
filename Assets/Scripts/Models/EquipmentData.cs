@@ -18,7 +18,10 @@ public class EquipmentData : ItemData
     public Vector3 gripRotation = Vector3.zero; // 相對插槽的旋轉偏移（歐拉角）
 
     [Header("武器動畫設定")]
-    public GameObject modelPrefab; // 佩帶時顯示在手上的模型（乾淨原版，不是 Pickup 變體）
+    public GameObject weaponPrefab; // 佩帶時顯示在手上的模型（乾淨原版，不是 Pickup 變體）
     public AnimationClip attackAnimation; // 這把武器自己的攻擊動作（留空 = 用預設動作）
     public float attackCooldown = 1f;     // 攻擊間隔（秒）：越小攻速越快
+
+    [Header("防具設定")]
+    public GameObject armorPrefab;
 }

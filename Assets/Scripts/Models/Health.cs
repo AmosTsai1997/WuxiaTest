@@ -247,7 +247,8 @@ public class Health : MonoBehaviour
         if (_anim != null) 
         {
             _anim.enabled = true;
-            _anim.Rebind();
+            _anim.Rebind(); 
+            if (actions != null) actions.RefreshWeapon(); //    重新掛載武器
             _anim.Play("Idle", 0, 0f); // 強制跳回 Idle 狀態
         }
 

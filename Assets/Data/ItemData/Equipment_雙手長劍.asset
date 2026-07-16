@@ -20,7 +20,7 @@ MonoBehaviour:
   attackSpeedBonus: 0
   buffDuration: 0
   slotType: 4
-  attackBonus: 50
+  attackBonus: 100
   defenseBonus: 0
   gripPosition: {x: 0.009, y: 0.111, z: 0}
   gripRotation: {x: 354.8813, y: 272.68396, z: 179.76036}
