@@ -2687,8 +2687,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "WASD \u79FB\u52D5\n\u6ED1\u9F20\u53F3\u9375\u79FB\u52D5\u93E1\u982D\n\u6ED1\u9F20\u5DE6\u9375\u653B\u64CA\nF\u9375\u8207NPC\u5C0D\u8A71\nE\u9375\u958B\u555F\u88DD\u5099\u6B04\nI\u9375\u958B\u555F\u80CC\u5305\n\u6B66\u5668\u5207\u63DBF1\u5927\u528D
-    F2\u5F13"
+  m_text: "WASD \u79FB\u52D5\n\u6ED1\u9F20\u53F3\u9375\u79FB\u52D5\u93E1\u982D\n\u6ED1\u9F20\u5DE6\u9375\u653B\u64CA\nF\u9375\u8207NPC\u5C0D\u8A71\nE\u9375\u958B\u555F\u88DD\u5099\u6B04/\u63A5\u53D7\u4EFB\u52D9\nI\u9375\u958B\u555F\u80CC\u5305\n\u5DE6\u9375\u96D9\u64CA\u88DD\u5099"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3e12c8b6806c0254e9e36b8f75c1fde7, type: 2}
   m_sharedMaterial: {fileID: 5241585168477276133, guid: 3e12c8b6806c0254e9e36b8f75c1fde7, type: 2}
@@ -3507,7 +3506,7 @@ GameObject:
   - component: {fileID: 747406920}
   - component: {fileID: 747406921}
   m_Layer: 5
-  m_Name: exp Slider
+  m_Name: Exp Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

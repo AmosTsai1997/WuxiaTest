@@ -241,19 +241,51 @@ public class PlayerActions : MonoBehaviour
 
         if (_weapon != null && _weapon.projectilePrefab != null)
         {
-            // 從胸口高度、身前一步生成（避免射線打到自己的 CharacterController）
-            Vector3 spawnPos = transform.position + Vector3.up * 1.2f + transform.forward * 0.8f;
-            GameObject arrowObj = Instantiate(_weapon.projectilePrefab, spawnPos, transform.rotation);
-            // 手上的武器純屬裝飾，把素材包自帶的碰撞體全部拆掉。
-            // 留著的話：弓橫在胸前就是一面牆，箭一出手先射中自己的弓
-            foreach (Collider c in _weaponModelInstance.GetComponentsInChildren<Collider>())
+            // 生成點貼近胸口。太前面的話，貼臉的怪會站在「箭的出生點後面」，
+            // 而射線從碰撞體內部出發不會命中它 —— 永遠射不到近身怪
+            Vector3 spawnPos = transform.position + Vector3.up * 1.0f + transform.forward * 0.1f;
+
+            // 軟自動瞄準：朝正面扇形內最近敵人的「軀幹中心」射，
+            // 順便解決矮怪問題（水平直射會從哥布林頭上飛過去）
+            Vector3 dir = transform.forward;
+            Transform targetEnemy = FindNearestTarget(range);
+            if (targetEnemy != null)
             {
-                Destroy(c);
+                Collider tc = targetEnemy.GetComponent<Collider>();
+                // bounds.center = 碰撞體的幾何中心（世界座標）——
+                // 比 transform.position 可靠，因為那通常是「腳底」
+                Vector3 aimPoint = (tc != null) ? tc.bounds.center : targetEnemy.position;
+                dir = (aimPoint - spawnPos).normalized;
             }
 
+            GameObject arrowObj = Instantiate(_weapon.projectilePrefab,
+                                              spawnPos, Quaternion.LookRotation(dir));
+
             Arrow arrow = arrowObj.GetComponent<Arrow>();
-            if (arrow != null) arrow.Init(damage, range); // 傷害與射程來自弓的資料卡
+            if (arrow != null) arrow.Init(damage, range);
         }
+    }
+
+    // 找正面扇形內「最近」的敵人（放箭自動瞄準用）
+    Transform FindNearestTarget(float range)
+    {
+        Transform nearest = null;
+        float nearestDist = float.MaxValue; // 先設成無限大，見一個比一個
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, range);
+        foreach (Collider c in hits)
+        {
+            if (!c.CompareTag("Enemy")) continue;
+            if (!InAttackAngle(c.transform)) continue;
+
+            float d = Vector3.Distance(transform.position, c.transform.position);
+            if (d < nearestDist)
+            {
+                nearestDist = d;
+                nearest = c.transform;
+            }
+        }
+        return nearest;
     }
 
     // 共用的正面角度判定（忽略高度差）
